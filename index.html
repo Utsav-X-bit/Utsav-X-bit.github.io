@@ -93,7 +93,7 @@
             <div class="fact"><span class="fact-k">currently</span><span class="fact-v">CUDA programming · deep learning</span></div>
             <div class="fact"><span class="fact-k">inference stack</span><span class="fact-v">vLLM · llama.cpp · Ollama</span></div>
             <div class="fact"><span class="fact-k">models run</span><span class="fact-v">qwen3 27b · llama 70b · flash</span></div>
-            <div class="fact"><span class="fact-k">os</span><span class="fact-v">arch linux · i use arch btw</span></div>
+            <div class="fact"><span class="fact-k">os</span><span class="fact-v">CachyOS · i use arch btw</span></div>
             <div class="fact"><span class="fact-k">languages</span><span class="fact-v">Python · C · C++ · TS · Java · SQL</span></div>
           </div>
         </div>
@@ -141,6 +141,42 @@
           </div>
           <p class="gh-lbl2">top languages</p>
           <div class="langbars" id="langbars"></div>
+        </div>
+      </div>
+      <div class="arena-grid arena-grid-2">
+        <div class="arena-card heat-card reveal">
+          <div class="card-term"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="card-title">github — contribution activity</span><a class="card-link" href="https://github.com/Utsav-X-bit" target="_blank" rel="noopener">profile ↗</a></div>
+          <div class="heat-stats"><span><strong id="gh-total">–</strong> contributions</span><span><strong id="gh-days">–</strong> active days</span></div>
+          <div class="heatmap-scroll"><div class="heatmap" id="gh-heatmap" role="img" aria-label="GitHub contribution activity heatmap, last 12 months"></div></div>
+          <div class="heat-legend"><span>less</span><span class="hl hl0"></span><span class="hl hl1"></span><span class="hl hl2"></span><span class="hl hl3"></span><span class="hl hl4"></span><span>more</span></div>
+        </div>
+        <div class="arena-card heat-card reveal">
+          <div class="card-term"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="card-title">codeforces — submission activity</span><a class="card-link" href="https://codeforces.com/profile/Utsav-X-bit" target="_blank" rel="noopener">profile ↗</a></div>
+          <div class="heat-stats"><span><strong id="cf-total">–</strong> submissions</span><span><strong id="cf-days">–</strong> active days</span></div>
+          <div class="heatmap-scroll"><div class="heatmap" id="cf-heatmap" role="img" aria-label="Codeforces submission activity heatmap, last 12 months"></div></div>
+          <div class="heat-legend cf-leg"><span>less</span><span class="hl c0"></span><span class="hl c1"></span><span class="hl c2"></span><span class="hl c3"></span><span class="hl c4"></span><span>more</span></div>
+        </div>
+      </div>
+      <div class="arena-card hpc-card reveal">
+        <div class="card-term"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="card-title">hpc — compute used for SAAGA</span><span class="card-tag">macchina</span></div>
+        <div class="hpc-body">
+          <div class="hpc-ascii" aria-hidden="true">      a8888b.
+     d888888b.
+     8P"YP"Y88
+     8|o||o|88
+     8'    .88
+     8`._.' Y8.
+    d/      `8b.
+   dP        Y8b.
+  d8:       ::88b.
+ d8"         'Y88b
+:8P           :888
+ 8a.         _a88P
+._/"Yaa     .| 88P|
+ \    YP"    `|  .`
+ /     \.___.d|  .'
+ `--..__)     `._.'</div>
+          <div class="hpc-specs" id="hpc-specs"></div>
         </div>
       </div>
     </div>
@@ -230,6 +266,27 @@
     <span class="dim">hand-built · no templates · no trackers</span>
   </div>
 </footer>
+
+<!-- ══════════ PROJECT DEEP-DIVE ══════════ -->
+<div id="proj-modal" class="pmodal" hidden role="dialog" aria-modal="true" aria-labelledby="pm-title">
+  <div class="pmodal-backdrop" id="pm-backdrop"></div>
+  <div class="pmodal-box" role="document">
+    <button class="pmodal-x" id="pm-close" aria-label="close project details">✕</button>
+    <div class="pmodal-head">
+      <span class="proj-tag" id="pm-tag"></span>
+      <h2 id="pm-title"></h2>
+      <p id="pm-desc"></p>
+      <div class="pmodal-links"><a id="pm-code" href="#" target="_blank" rel="noopener">view code ↗</a></div>
+    </div>
+    <div class="pm-stats" id="pm-stats"></div>
+    <h3 class="pm-h">./under_the_hood</h3>
+    <div class="pm-arch" id="pm-arch"></div>
+    <h3 class="pm-h">./key_features</h3>
+    <ul class="pm-feats" id="pm-feats"></ul>
+    <h3 class="pm-h">./stack</h3>
+    <div class="pm-stack" id="pm-stack"></div>
+  </div>
+</div>
 
 <!-- ══════════ BREACH MODE ══════════ -->
 <div id="breach" aria-hidden="true">

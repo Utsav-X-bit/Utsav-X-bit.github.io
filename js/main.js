@@ -170,7 +170,15 @@
       '<span class="proj-links"><a href="' + p.url + '" target="_blank" rel="noopener">code ↗</a></span></div>' +
       '<h3>' + p.name + '</h3><p>' + p.desc + '</p>' +
       '<div class="proj-meta"><span><span class="lang-dot" style="background:' + (langColors[p.language] || "#94A3B8") + '"></span>' + p.language + '</span>' +
-      '<span>updated ' + p.updated + '</span></div>';
+      '<span>updated ' + p.updated + '</span></div>' +
+      '<span class="proj-deep">▸ click for deep dive</span>';
+    card.setAttribute("tabindex", "0");
+    card.setAttribute("role", "button");
+    card.setAttribute("aria-label", p.name + " — open project deep dive");
+    card.querySelector(".proj-links a").addEventListener("click", e => e.stopPropagation());
+    const launch = () => openModal(p);
+    card.addEventListener("click", launch);
+    card.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); launch(); } });
     grid.appendChild(card);
     revObs.observe(card);
   });
@@ -316,6 +324,127 @@
   $$("#nav-links a").forEach(a => a.addEventListener("click", () => {
     links.classList.remove("open"); toggle.classList.remove("open"); toggle.setAttribute("aria-expanded", "false");
   }));
+
+  /* ═══ ACTIVITY HEATMAPS ═══ */
+  const NS2 = "http://www.w3.org/2000/svg";
+  function renderHeatmap(elId, data, prefix, noun) {
+    const el = document.getElementById(elId);
+    if (!el || !data) return;
+    const counts = {};
+    let max = 1, total = 0;
+    data.forEach(([d, c]) => { counts[d] = c; if (c > max) max = c; total += c; });
+    const lvl = c => c === 0 ? 0 : c <= max * 0.25 ? 1 : c <= max * 0.5 ? 2 : c <= max * 0.75 ? 3 : 4;
+    const end = new Date(); end.setHours(0, 0, 0, 0);
+    const start = new Date(end); start.setDate(start.getDate() - (53 * 7 - 1));
+    start.setDate(start.getDate() - start.getDay());
+    const cell = 11, gap = 3, top = 20, left = 8;
+    const weeks = [];
+    for (let w = new Date(start); w <= end; w.setDate(w.getDate() + 7)) weeks.push(new Date(w));
+    const W = left * 2 + weeks.length * (cell + gap), H = top + 7 * (cell + gap) + 6;
+    const svg = document.createElementNS(NS2, "svg");
+    svg.setAttribute("width", W); svg.setAttribute("height", H);
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+    const iso = dt => dt.getFullYear() + "-" + String(dt.getMonth() + 1).padStart(2, "0") + "-" + String(dt.getDate()).padStart(2, "0");
+    let lastMonth = -1;
+    weeks.forEach((w, wi) => {
+      if (w.getMonth() !== lastMonth) {
+        lastMonth = w.getMonth();
+        if (wi > 0) {
+          const t = document.createElementNS(NS2, "text");
+          t.setAttribute("x", left + wi * (cell + gap)); t.setAttribute("y", 13);
+          t.setAttribute("fill", "#64748b"); t.setAttribute("font-size", "10");
+          t.textContent = w.toLocaleString("en", { month: "short" });
+          svg.appendChild(t);
+        }
+      }
+      for (let d = 0; d < 7; d++) {
+        const dt = new Date(w); dt.setDate(dt.getDate() + d);
+        if (dt > end) break;
+        const key = iso(dt), c = counts[key] || 0;
+        const r = document.createElementNS(NS2, "rect");
+        r.setAttribute("x", left + wi * (cell + gap)); r.setAttribute("y", top + d * (cell + gap));
+        r.setAttribute("width", cell); r.setAttribute("height", cell); r.setAttribute("rx", 2.5);
+        r.setAttribute("class", prefix + lvl(c));
+        const tt = document.createElementNS(NS2, "title");
+        tt.textContent = c + " " + noun + (c === 1 ? "" : "s") + " on " + key;
+        r.appendChild(tt); svg.appendChild(r);
+      }
+    });
+    el.appendChild(svg);
+    return { total, days: data.length };
+  }
+  const ghS = renderHeatmap("gh-heatmap", DATA.ghActivity, "hl", "contribution");
+  const cfS = renderHeatmap("cf-heatmap", DATA.cfActivity, "c", "submission");
+  if (ghS) { $("#gh-total").textContent = ghS.total; $("#gh-days").textContent = ghS.days; }
+  if (cfS) { $("#cf-total").textContent = cfS.total; $("#cf-days").textContent = cfS.days; }
+
+  /* ═══ HPC SPECS (macchina) ═══ */
+  const hpcEl = $("#hpc-specs");
+  if (hpcEl && DATA.hpc) {
+    const rows = [["Host", DATA.hpc.host], ["Machine", DATA.hpc.machine], ["CPU", DATA.hpc.cpu],
+      ["GPU", DATA.hpc.gpus], ["Memory", DATA.hpc.memory], ["Distro", DATA.hpc.distro], ["Kernel", DATA.hpc.kernel]];
+    hpcEl.innerHTML = rows.map(([k, v]) => '<span class="hk">' + k + "</span><span class='hv'>" + v + "</span>").join("") +
+      '<p class="hpc-note">live specs from the DGX A100 box used while developing SAAGA — HPC runs for LLM evaluation.</p>';
+  }
+
+  /* ═══ PROJECT DEEP-DIVE MODAL ═══ */
+  const modal = $("#proj-modal"), pmBox = modal.querySelector(".pmodal-box");
+  let lastFocus = null;
+  function archSVG(nodes, loop) {
+    const nW = 148, nH = 56, gapX = 52, padX = 24, topY = 24;
+    const W = padX * 2 + nodes.length * nW + (nodes.length - 1) * gapX;
+    const H = topY * 2 + nH + (loop ? 72 : 0);
+    const triR = (x, y) => '<polygon points="' + x + "," + (y - 5.5) + " " + x + "," + (y + 5.5) + " " + (x + 9) + "," + y + '" fill="#22C55E"/>';
+    const triL = (x, y) => '<polygon points="' + x + "," + (y - 5.5) + " " + x + "," + (y + 5.5) + " " + (x - 9) + "," + y + '" fill="#22C55E"/>';
+    let s = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="project architecture diagram">';
+    nodes.forEach((label, i) => {
+      const x = padX + i * (nW + gapX), y = topY;
+      s += '<rect x="' + x + '" y="' + y + '" width="' + nW + '" height="' + nH + '" rx="10" fill="rgba(34,197,94,.06)" stroke="#22C55E" stroke-width="1.4"/>';
+      const words = label.split(" "), mid = Math.ceil(words.length / 2);
+      const lines = words.length > 2 ? [words.slice(0, mid).join(" "), words.slice(mid).join(" ")] : [label];
+      lines.forEach((ln, li) => {
+        s += '<text x="' + (x + nW / 2) + '" y="' + (y + nH / 2 + (li - (lines.length - 1) / 2) * 16 + 5) + '" text-anchor="middle" fill="#e2e8f0" font-size="12.5" font-family="monospace">' + ln + "</text>";
+      });
+      if (i < nodes.length - 1) {
+        const x1 = x + nW, x2 = x + nW + gapX, cy = y + nH / 2;
+        s += '<line x1="' + x1 + '" y1="' + cy + '" x2="' + (x2 - 13) + '" y2="' + cy + '" stroke="#22C55E" stroke-width="1.6"/>' + triR(x2 - 13, cy);
+      }
+    });
+    if (loop && nodes.length > 1) {
+      const sx = padX + nodes.length * nW + (nodes.length - 1) * gapX - 12, sy = topY + nH;
+      const ex = padX + 12, ey = topY + nH;
+      s += '<path d="M' + sx + "," + sy + " C" + (sx + 44) + "," + (sy + 62) + " " + (ex + 44) + "," + (ey + 62) + " " + (ex + 10) + "," + ey + '" fill="none" stroke="#22C55E" stroke-width="1.4" stroke-dasharray="6 5"/>';
+      s += triL(ex + 10, ey);
+      s += '<text x="' + (W / 2) + '" y="' + (H - 6) + '" text-anchor="middle" fill="#64748b" font-size="11" font-family="monospace">self-improving loop</text>';
+    }
+    return s + "</svg>";
+  }
+  function openModal(p) {
+    const d = p.details || {};
+    $("#pm-tag").textContent = p.tag;
+    $("#pm-title").textContent = p.name;
+    $("#pm-desc").textContent = p.desc;
+    $("#pm-code").href = p.url;
+    const stats = [["primary language", p.language], ["last updated", p.updated]];
+    if (d.size) stats.push(["repo size", d.size]);
+    if (d.features) stats.push(["key features", d.features.length]);
+    $("#pm-stats").innerHTML = stats.map(([k, v]) => '<div class="pm-stat"><b>' + v + "</b><span>" + k + "</span></div>").join("");
+    $("#pm-arch").innerHTML = d.arch ? archSVG(d.arch, d.loop) : "<p class='dim'>no diagram</p>";
+    $("#pm-feats").innerHTML = (d.features || []).map(f => "<li>" + f + "</li>").join("");
+    $("#pm-stack").innerHTML = (d.stack || []).map(t => "<span>" + t + "</span>").join("");
+    lastFocus = document.activeElement;
+    modal.hidden = false;
+    document.body.classList.add("pm-open");
+    $("#pm-close").focus();
+  }
+  function closeModal() {
+    modal.hidden = true;
+    document.body.classList.remove("pm-open");
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  $("#pm-close").addEventListener("click", closeModal);
+  $("#pm-backdrop").addEventListener("click", closeModal);
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !modal.hidden) closeModal(); });
 
   /* ═══ ACTIVE NAV LINK ═══ */
   const secIds = ["about", "projects", "arena", "journey", "certs", "contact"];

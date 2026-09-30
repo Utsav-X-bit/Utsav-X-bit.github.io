@@ -23,7 +23,14 @@ const DATA = {
       updated: "Sep 2026",
       featured: true,
       tag: "LLM security research",
-      desc: "Automated red-teaming framework for LLMs. A planner model picks attack strategies, a generator writes concise attack prompts, and a deterministic 4-signal ladder verifies extracted secrets with no LLM judge. Ships with CLI, FastAPI/React dashboard, FAISS-backed self-improving memory, and support for vLLM, Ollama, HuggingFace and cloud APIs — tuned with HPC practices for large-scale evaluation runs."
+      desc: "Automated red-teaming framework for LLMs. A planner model picks attack strategies, a generator writes concise attack prompts, and a deterministic 4-signal ladder verifies extracted secrets with no LLM judge. Ships with CLI, FastAPI/React dashboard, FAISS-backed self-improving memory, and support for vLLM, Ollama, HuggingFace and cloud APIs — tuned with HPC practices for evaluation runs.",
+      details: {
+        features: ["Planner LLM selects attack strategies per target", "Generator writes concise attack prompts", "Deterministic 4-signal ladder verifies extracted secrets - no LLM judge", "CLI plus FastAPI/React dashboard", "FAISS-backed self-improving memory loop", "Backends: vLLM, Ollama, HuggingFace and cloud APIs", "Evaluation runs tuned with HPC practices on DGX A100 hardware"],
+        stack: ["Python", "vLLM", "Ollama", "FastAPI", "React", "FAISS"],
+        arch: ["planner LLM", "attack generator", "target model", "4-signal verifier", "FAISS memory"],
+        loop: true,
+        size: null
+      }
     },
     {
       name: "TuxPages",
@@ -31,7 +38,14 @@ const DATA = {
       language: "TypeScript",
       updated: "Apr 2026",
       tag: "full-stack web",
-      desc: "Decoupled blog platform: Next.js 16 + TipTap rich-text editor frontend, Hono TypeScript API on Cloudflare Workers, PostgreSQL (Neon) with Drizzle ORM. OTP passwordless auth via Brevo, JWT cookie sessions, comments and post voting."
+      desc: "Decoupled blog platform: Next.js 16 + TipTap rich-text editor frontend, Hono TypeScript API on Cloudflare Workers, PostgreSQL (Neon) with Drizzle ORM. OTP passwordless auth via Brevo, JWT cookie sessions, comments and post voting.",
+      details: {
+        features: ["Decoupled frontend/backend architecture", "Next.js 16 + TipTap rich-text editor", "Hono TypeScript API on Cloudflare Workers", "PostgreSQL (Neon) with Drizzle ORM", "OTP passwordless auth via Brevo", "JWT cookie sessions, comments and post voting"],
+        stack: ["TypeScript", "Next.js 16", "TipTap", "Hono", "Cloudflare Workers", "PostgreSQL", "Drizzle"],
+        arch: ["Next.js + TipTap", "Hono API", "Cloudflare Workers", "PostgreSQL"],
+        loop: false,
+        size: null
+      }
     },
     {
       name: "B3CTR-CSPRNG",
@@ -39,7 +53,14 @@ const DATA = {
       language: "Python",
       updated: "Sep 2025",
       tag: "cryptography",
-      desc: "Hybrid cryptographically-secure PRNG built on BLAKE3 with external entropy sources. Ships a NumPy/SciPy statistical validation suite (chi-square, runs test, autocorrelation) and passes all 17 NIST randomness tests. Backed by an IIT Roorkee-approved report."
+      desc: "Hybrid cryptographically-secure PRNG built on BLAKE3 with external entropy sources. Ships a NumPy/SciPy statistical validation suite (chi-square, runs test, autocorrelation) and passes all 17 NIST randomness tests. Backed by an IIT Roorkee-approved report.",
+      details: {
+        features: ["Hybrid CSPRNG built on BLAKE3", "External entropy sources (os.urandom, time)", "NumPy/SciPy statistical validation suite", "Chi-square, runs test and autocorrelation checks", "Passes all 17 NIST randomness tests"],
+        stack: ["Python", "BLAKE3", "NumPy", "SciPy"],
+        arch: ["entropy pool", "BLAKE3 core", "reseed mixer", "NIST STS - 17/17"],
+        loop: false,
+        size: "92 MB"
+      }
     },
     {
       name: "Games_In_SDL2",
@@ -47,7 +68,14 @@ const DATA = {
       language: "C",
       updated: "Jun 2025",
       tag: "game engine",
-      desc: "Two games in C with SDL2: a modular 2D platformer engine (input handling, gravity/collision physics, texture & font asset management, fixed-timestep game loop) plus a graphical Tic-Tac-Toe with an unbeatable Minimax AI."
+      desc: "Two games in C with SDL2: a modular 2D platformer engine (input handling, gravity/collision physics, texture & font asset management, fixed-timestep game loop) plus a graphical Tic-Tac-Toe with an unbeatable Minimax AI.",
+      details: {
+        features: ["Modular 2D platformer engine in C", "Input handling, gravity/collision physics", "Texture and font asset management", "Fixed-timestep game loop", "Graphical Tic-Tac-Toe with unbeatable Minimax AI"],
+        stack: ["C", "SDL2"],
+        arch: ["fixed-timestep loop", "physics + collision", "SDL2 renderer", "minimax AI"],
+        loop: false,
+        size: "377 MB"
+      }
     },
     {
       name: "MultiFormat-Log-Parser",
@@ -55,7 +83,14 @@ const DATA = {
       language: "C++",
       updated: "Jan 2026",
       tag: "systems / SIEM",
-      desc: "C++ tool that parses fields out of heterogeneous log files with regex rules and emits normalized CSV (e.g. Linux auth logs). The parsing core of a unified SIEM built during the ISEA internship."
+      desc: "C++ tool that parses fields out of heterogeneous log files with regex rules and emits normalized CSV (e.g. Linux auth logs). The parsing core of a unified SIEM built during the ISEA internship.",
+      details: {
+        features: ["Parses heterogeneous log files via regex rules", "C++ parsing core", "Normalized CSV output (e.g. Linux auth logs)", "Sample logs and parsed outputs included in repo"],
+        stack: ["C++", "regex"],
+        arch: ["raw logs", "regex rules", "C++ parse core", "CSV output"],
+        loop: false,
+        size: "274 KB"
+      }
     },
     {
       name: "AutoClicker",
@@ -63,7 +98,14 @@ const DATA = {
       language: "Python",
       updated: "Apr 2026",
       tag: "systems",
-      desc: "Click-speed booster at the kernel input layer: reads the physical mouse via evdev, separates spam-clicking from holding with a sliding-window detector, and injects extra clicks through a uinput virtual device. Works on Wayland, X11 and TTY, with hotkey toggle and a systemd service."
+      desc: "Click-speed booster at the kernel input layer: reads the physical mouse via evdev, separates spam-clicking from holding with a sliding-window detector, and injects extra clicks through a uinput virtual device. Works on Wayland, X11 and TTY, with hotkey toggle and a systemd service.",
+      details: {
+        features: ["Operates at the Linux kernel input layer", "Reads the physical mouse via evdev", "Sliding-window detector distinguishes spam-clicking from holding", "Injects extra clicks through a uinput virtual device", "Boosts 3-4 CPS to 12-14 CPS", "Works on Wayland, X11 and TTY", "Hotkey toggle plus systemd service"],
+        stack: ["Python", "evdev", "uinput", "systemd"],
+        arch: ["evdev mouse in", "sliding-window detector", "uinput injector"],
+        loop: false,
+        size: "27 KB"
+      }
     },
     {
       name: "Plant-Clasification-using-Machine-Learning",
@@ -71,7 +113,14 @@ const DATA = {
       language: "Python",
       updated: "Jan 2025",
       tag: "machine learning",
-      desc: "Custom-trained classifier for 40 medicinal plant species from images (~70% accuracy), with a Python inference script — end-to-end ML from data collection to a working model."
+      desc: "Custom-trained classifier for 40 medicinal plant species from images (~70% accuracy), with a Python inference script — end-to-end ML from data collection to a working model.",
+      details: {
+        features: ["Classifies 40 medicinal plant species from images", "200 training images per species", "~70% accuracy", "Python inference script included"],
+        stack: ["Python", "machine learning"],
+        arch: ["leaf images", "CNN model", "40-species classifier"],
+        loop: false,
+        size: null
+      }
     },
     {
       name: "Web-Automation-Scripts",
@@ -79,7 +128,14 @@ const DATA = {
       language: "OpenBullet",
       updated: "Jun 2025",
       tag: "web automation",
-      desc: "Maintained collection of OpenBullet / OpenBullet2 / SilverBullet automation scripts with cookie and session handling, modular reusable workflows and documented usage."
+      desc: "Maintained collection of OpenBullet / OpenBullet2 / SilverBullet automation scripts with cookie and session handling, modular reusable workflows and documented usage.",
+      details: {
+        features: ["Maintained collection of web-automation scripts", "OpenBullet / OpenBullet2 / SilverBullet", "Cookie and session handling", "Modular, reusable workflows", "Documented usage"],
+        stack: ["OpenBullet", "SilverBullet"],
+        arch: ["task scripts", "sessions + cookies", "automation runners"],
+        loop: false,
+        size: "82 KB"
+      }
     }
   ],
 
@@ -114,6 +170,23 @@ const DATA = {
       { n: "Codeforces Round 1120 (Div. 2)", rank: 7693, rating: 905, t: "2026-09-12" },
       { n: "Codeforces Round 1121 (Div. 2)", rank: 4730, rating: 979, t: "2026-09-13" }
     ]
+  },
+
+  /* ── activity heatmaps (snapshots fetched 2026-09-30) ── */
+  /* GitHub: 421 contributions over the last year (public events) */
+  ghActivity: [["2025-10-08",1],["2025-10-10",3],["2025-10-14",3],["2025-10-15",2],["2025-10-22",3],["2025-10-23",2],["2025-10-24",1],["2025-11-03",1],["2025-11-20",5],["2025-11-22",1],["2025-12-04",1],["2025-12-07",2],["2026-01-01",4],["2026-01-02",1],["2026-01-07",2],["2026-01-08",1],["2026-01-11",2],["2026-01-17",1],["2026-01-25",1],["2026-02-01",1],["2026-02-04",3],["2026-02-05",4],["2026-02-08",1],["2026-02-09",77],["2026-02-10",8],["2026-02-12",1],["2026-02-13",4],["2026-02-16",1],["2026-02-17",1],["2026-02-20",1],["2026-02-21",1],["2026-02-22",3],["2026-03-05",6],["2026-03-06",4],["2026-03-23",2],["2026-03-26",2],["2026-03-29",22],["2026-03-30",16],["2026-03-31",6],["2026-04-01",4],["2026-04-03",6],["2026-04-04",1],["2026-04-05",1],["2026-04-08",2],["2026-04-13",3],["2026-04-17",2],["2026-04-18",6],["2026-04-19",1],["2026-05-16",1],["2026-06-06",1],["2026-06-08",1],["2026-07-14",1],["2026-07-15",6],["2026-07-16",22],["2026-07-17",6],["2026-07-22",1],["2026-07-25",1],["2026-08-04",4],["2026-08-07",5],["2026-08-09",1],["2026-08-10",4],["2026-08-12",2],["2026-08-13",1],["2026-08-16",2],["2026-08-17",3],["2026-08-26",34],["2026-08-27",14],["2026-08-28",9],["2026-08-29",21],["2026-08-30",32],["2026-09-01",3],["2026-09-04",1],["2026-09-08",1],["2026-09-09",10],["2026-09-12",1],["2026-09-15",1],["2026-09-16",1],["2026-09-22",2],["2026-09-24",1],["2026-09-30",1]],
+  /* Codeforces: 291 submissions, 78 active days */
+  cfActivity: [["2025-08-12",4],["2025-08-13",1],["2025-08-15",2],["2025-08-24",8],["2025-08-28",1],["2025-08-29",1],["2025-08-31",3],["2025-09-08",7],["2025-09-13",5],["2025-09-16",6],["2025-09-18",4],["2025-09-19",1],["2025-09-20",5],["2025-09-21",1],["2025-09-25",4],["2025-09-27",4],["2025-10-03",1],["2025-10-05",2],["2025-10-06",3],["2025-10-07",4],["2025-10-08",16],["2025-10-09",2],["2025-10-10",14],["2025-10-11",3],["2025-10-12",4],["2025-10-14",2],["2025-10-15",7],["2025-10-16",1],["2025-10-17",3],["2025-11-03",5],["2025-12-05",1],["2026-01-17",2],["2026-01-20",3],["2026-01-21",13],["2026-01-23",2],["2026-01-25",5],["2026-01-27",8],["2026-01-29",7],["2026-01-30",2],["2026-01-31",7],["2026-02-11",5],["2026-02-13",2],["2026-03-14",4],["2026-03-15",2],["2026-03-28",3],["2026-05-13",8],["2026-05-15",7],["2026-05-16",9],["2026-05-19",11],["2026-05-20",1],["2026-05-21",7],["2026-05-23",2],["2026-05-24",6],["2026-05-26",3],["2026-05-27",3],["2026-05-28",2],["2026-05-29",3],["2026-05-30",1],["2026-05-31",1],["2026-06-07",1],["2026-06-09",5],["2026-06-11",1],["2026-06-12",1],["2026-06-13",2],["2026-07-03",1],["2026-07-04",1],["2026-07-06",2],["2026-08-09",1],["2026-09-03",1],["2026-09-04",5],["2026-09-05",3],["2026-09-08",2],["2026-09-09",1],["2026-09-11",3],["2026-09-12",2],["2026-09-13",3],["2026-09-15",1],["2026-09-16",1]],
+
+  /* ── HPC environment used while developing SAAGA (from macchina) ── */
+  hpc: {
+    host: "isea31@login",
+    machine: "NVIDIA DGX A100",
+    cpu: "AMD EPYC 7742 64-Core (256 threads)",
+    gpus: "8x NVIDIA A100 SXM4 40GB",
+    memory: "1056 GB",
+    distro: "Ubuntu 22.04.4 LTS",
+    kernel: "5.15.0-1062-nvidia"
   },
 
   github: {
