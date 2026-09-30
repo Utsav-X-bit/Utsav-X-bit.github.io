@@ -402,13 +402,19 @@
     const stages = spec.stages || [], flows = spec.flows || [];
     const pos = {};
     let maxN = 1;
-    stages.forEach(st => { maxN = Math.max(maxN, st.nodes.length); });
-    const bandW = maxN * (NW + GX) - GX, W = PAD * 2 + bandW;
+    const used = [];
+    stages.forEach(st => {
+      maxN = Math.max(maxN, st.nodes.length);
+      st.nodes.forEach(n => { if (n.kind && used.indexOf(n.kind) < 0) used.push(n.kind); });
+    });
+    const bandW = maxN * (NW + GX) - GX;
+    const legendW = used.map(k => KIND_N[k].length * 6.4 + 26).reduce((a, b) => a + b, 0);
+    const W = Math.max(PAD * 2 + bandW, legendW + PAD * 2);
     stages.forEach((st, si) => {
       const y = PAD + si * (NH + LBLH + BGAP) + LBLH;
-      const off = (bandW - (st.nodes.length * (NW + GX) - GX)) / 2;
+      const rowW = st.nodes.length * (NW + GX) - GX, x0 = (W - rowW) / 2;
       st.nodes.forEach((n, ni) => {
-        const x = PAD + off + ni * (NW + GX);
+        const x = x0 + ni * (NW + GX);
         pos[n.id] = { x, y, cx: x + NW / 2, cy: y + NH / 2, n };
       });
     });
@@ -425,12 +431,12 @@
       if (cur.trim()) lines.push(cur.trim());
       return lines.slice(0, 2);
     };
-    let s = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="project architecture diagram">';
+    let s = '<svg width="' + W + '" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="project architecture diagram">';
     // stage bands
     stages.forEach((st, si) => {
-      const y = PAD + si * (NH + LBLH + BGAP);
-      s += '<rect x="' + (PAD - 14) + '" y="' + y + '" width="' + (bandW + 28) + '" height="' + (NH + LBLH + 22) + '" rx="12" fill="none" stroke="#1e293b" stroke-width="1" stroke-dasharray="5 5"/>';
-      s += '<text x="' + (PAD - 4) + '" y="' + (y + 16) + '" fill="#22C55E" font-size="11" font-family="monospace">' + esc("0" + (si + 1) + " · " + st.name) + "</text>";
+      const y = PAD + si * (NH + LBLH + BGAP), bx = (W - bandW) / 2 - 14;
+      s += '<rect x="' + bx + '" y="' + y + '" width="' + (bandW + 28) + '" height="' + (NH + LBLH + 22) + '" rx="12" fill="none" stroke="#1e293b" stroke-width="1" stroke-dasharray="5 5"/>';
+      s += '<text x="' + (bx + 10) + '" y="' + (y + 16) + '" fill="#22C55E" font-size="11" font-family="monospace">' + esc("0" + (si + 1) + " · " + st.name) + "</text>";
     });
     // edges (under nodes)
     flows.forEach(fl => {
@@ -476,9 +482,7 @@
       }
     });
     // legend
-    const used = [];
-    Object.keys(pos).forEach(id => { const k = pos[id].n.kind; if (k && used.indexOf(k) < 0) used.push(k); });
-    let lx = W / 2 - (used.map(k => KIND_N[k].length * 6.4 + 26).reduce((a, b) => a + b, 0)) / 2;
+    let lx = W / 2 - legendW / 2;
     used.forEach(k => {
       const wpx = KIND_N[k].length * 6.4 + 26;
       s += '<circle cx="' + (lx + 8) + '" cy="' + (H - 16) + '" r="5" fill="' + KIND_C[k] + '"/>';
@@ -493,7 +497,7 @@
     const H = topY * 2 + nH + (loop ? 72 : 0);
     const triR = (x, y) => '<polygon points="' + x + "," + (y - 5.5) + " " + x + "," + (y + 5.5) + " " + (x + 9) + "," + y + '" fill="#22C55E"/>';
     const triL = (x, y) => '<polygon points="' + x + "," + (y - 5.5) + " " + x + "," + (y + 5.5) + " " + (x - 9) + "," + y + '" fill="#22C55E"/>';
-    let s = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="project architecture diagram">';
+    let s = '<svg width="' + W + '" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="project architecture diagram">';
     nodes.forEach((label, i) => {
       const x = padX + i * (nW + gapX), y = topY;
       s += '<rect x="' + x + '" y="' + y + '" width="' + nW + '" height="' + nH + '" rx="10" fill="rgba(34,197,94,.06)" stroke="#22C55E" stroke-width="1.4"/>';
