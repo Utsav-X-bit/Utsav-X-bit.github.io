@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Utsav Gupta — Cybersecurity · Cryptography · Game Dev</title>
+<meta name="description" content="Portfolio of Utsav Gupta: cybersecurity researcher, cryptography engineer, game developer. B.Tech CSE '28, VIPS New Delhi.">
+<meta name="theme-color" content="#0F172A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%230F172A'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%2322C55E' font-family='monospace' font-weight='bold'>&gt;_</text></svg>">
+</head>
+<body>
+
+<a class="skip-link" href="#about">skip to content</a>
+<div id="progress"></div>
+<div id="cursor-dot" aria-hidden="true"></div>
+<div id="cursor-ring" aria-hidden="true"></div>
+
+<!-- ══════════ BOOT LOADER ══════════ -->
+<div id="loader" aria-hidden="true">
+  <div class="loader-box">
+    <div class="loader-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="loader-title">secure-shell — portfolio</span></div>
+    <div id="loader-log" class="loader-log"></div>
+    <div class="loader-bar"><div id="loader-fill"></div></div>
+    <div class="loader-skip">click anywhere to skip</div>
+  </div>
+</div>
+
+<!-- ══════════ NAV ══════════ -->
+<header id="nav">
+  <a class="nav-logo" href="#top" aria-label="home"><span class="prompt">utsav@x</span><span class="dim">:</span><span class="path">~/portfolio</span><span class="dim">$</span><span class="caret">▊</span></a>
+  <nav class="nav-links" id="nav-links" aria-label="sections">
+    <a href="#about">about</a>
+    <a href="#projects">projects</a>
+    <a href="#arena">arena</a>
+    <a href="#journey">journey</a>
+    <a href="#certs">certs</a>
+    <a href="#contact" class="nav-cta">contact</a>
+  </nav>
+  <button id="nav-toggle" aria-label="menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</header>
+
+<main id="top">
+
+  <!-- ══════════ HERO ══════════ -->
+  <section class="hero">
+    <canvas id="hexfield" aria-hidden="true"></canvas>
+    <div id="glow" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <div class="hero-status reveal">
+        <span class="pulse"></span> system online
+        <span class="sep">·</span> cf <strong>979</strong> <span class="dim">(max 1014)</span>
+        <span class="sep">·</span> <strong>8</strong> featured projects
+        <span class="sep">·</span> new delhi, in
+      </div>
+      <p class="hero-eyebrow reveal">// hello there, i am</p>
+      <h1 class="hero-name" data-scramble>UTSAV GUPTA</h1>
+      <p class="hero-roles reveal"><span id="typed-roles"></span><span class="caret">▊</span></p>
+      <p class="hero-bio reveal">I break, build and secure software — from LLM red-teaming frameworks and a BLAKE3-based CSPRNG, to game engines in C and full-stack apps on the edge. B.Tech CSE '28 at VIPS, New Delhi.</p>
+      <div class="hero-ctas reveal">
+        <a href="#projects" class="btn btn-primary">./view_projects.sh</a>
+        <a href="assets/resume/Utsav-Gupta-Resume.pdf" class="btn btn-ghost" download>download résumé</a>
+      </div>
+      <div class="hero-socials reveal">
+        <a href="https://github.com/Utsav-X-bit" target="_blank" rel="noopener" aria-label="GitHub">github</a>
+        <a href="https://linkedin.com/in/utsav-gupta-098874322" target="_blank" rel="noopener" aria-label="LinkedIn">linkedin</a>
+        <a href="https://codeforces.com/profile/Utsav-X-bit" target="_blank" rel="noopener" aria-label="Codeforces">codeforces</a>
+        <a href="mailto:utsavgupta5467@gmail.com" aria-label="Email">email</a>
+      </div>
+    </div>
+    <a class="scroll-cue" href="#about" aria-label="scroll to about"><span></span></a>
+  </section>
+
+  <!-- ══════════ TICKER ══════════ -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track" id="marquee-track"></div>
+  </div>
+
+  <!-- ══════════ ABOUT ══════════ -->
+  <section id="about" class="section">
+    <div class="wrap">
+      <p class="eyebrow reveal">// about me</p>
+      <h2 class="sec-title" data-scramble>whoami</h2>
+      <div class="about-grid">
+        <div class="about-main reveal">
+          <p>I'm <strong>Utsav Gupta</strong>, a computer science undergrad who lives at the intersection of <strong>offense and defense</strong>. My newest work is <strong>SAAGA</strong> — an automated red-teaming framework for large language models, built during LLM-security research. Before that I engineered a <strong>hybrid CSPRNG on BLAKE3</strong> that passes all 17 NIST randomness tests, wrote a <strong>2D game engine in C/SDL2</strong>, and interned in <strong>cybersecurity &amp; digital forensics</strong> under ISEA Phase III (MeitY).</p>
+          <p>When I'm not auditing randomness or mutating jailbreak prompts, I'm grinding competitive programming on Codeforces, shipping full-stack apps, or poking at the Linux kernel input layer for fun.</p>
+          <div class="fact-row">
+            <div class="fact"><span class="fact-k">focus</span><span class="fact-v">LLM security · crypto · systems</span></div>
+            <div class="fact"><span class="fact-k">currently</span><span class="fact-v">red-teaming LLMs · CP grind</span></div>
+            <div class="fact"><span class="fact-k">languages</span><span class="fact-v">Python · C · C++ · TS · Java · SQL</span></div>
+            <div class="fact"><span class="fact-k">os</span><span class="fact-v">linux (cachyos) · wayland native</span></div>
+          </div>
+        </div>
+        <aside class="about-card reveal">
+          <div class="card-term"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="card-title">profile.json</span></div>
+          <pre class="json">{<br>  <span class="jk">"name"</span>: <span class="js">"Utsav Gupta"</span>,<br>  <span class="jk">"degree"</span>: <span class="js">"B.Tech CSE '28"</span>,<br>  <span class="jk">"college"</span>: <span class="js">"VIPS, New Delhi"</span>,<br>  <span class="jk">"cgpa"</span>: <span class="js">"8.95 / 10"</span>,<br>  <span class="jk">"cf_max"</span>: <span class="jn">1014</span>,<br>  <span class="jk">"open_to"</span>: [<span class="js">"internships"</span>,<br>             <span class="js">"research"</span>,<br>             <span class="js">"collabs"</span>]<br>}</pre>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ PROJECTS ══════════ -->
+  <section id="projects" class="section">
+    <div class="wrap">
+      <p class="eyebrow reveal">// software</p>
+      <h2 class="sec-title" data-scramble>featured_projects</h2>
+      <p class="sec-sub reveal">Eight builds I'm proud of — security research, cryptography, engines, and systems. Everything else lives on <a href="https://github.com/Utsav-X-bit?tab=repositories" target="_blank" rel="noopener">GitHub</a>.</p>
+      <div class="bento" id="project-grid"><!-- rendered by js --></div>
+    </div>
+  </section>
+
+  <!-- ══════════ ARENA (CP + GitHub) ══════════ -->
+  <section id="arena" class="section">
+    <div class="wrap">
+      <p class="eyebrow reveal">// competitive programming &amp; open source</p>
+      <h2 class="sec-title" data-scramble>the_arena</h2>
+      <div class="arena-grid">
+        <div class="arena-card cf-card reveal">
+          <div class="card-term"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="card-title">codeforces — rating history</span><a class="card-link" href="https://codeforces.com/profile/Utsav-X-bit" target="_blank" rel="noopener">profile ↗</a></div>
+          <div class="cf-stats">
+            <div class="cf-stat"><span class="cf-num" id="cf-cur">–</span><span class="cf-lbl">current</span></div>
+            <div class="cf-stat"><span class="cf-num" id="cf-max">–</span><span class="cf-lbl">max rating</span></div>
+            <div class="cf-stat"><span class="cf-num" id="cf-n">–</span><span class="cf-lbl">contests</span></div>
+          </div>
+          <div class="chart-wrap">
+            <svg id="cf-chart" role="img" aria-label="Codeforces rating history chart"></svg>
+            <div id="cf-tip" class="cf-tip" hidden></div>
+          </div>
+        </div>
+        <div class="arena-card gh-card reveal">
+          <div class="card-term"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="card-title">github — Utsav-X-bit</span><a class="card-link" href="https://github.com/Utsav-X-bit" target="_blank" rel="noopener">profile ↗</a></div>
+          <div class="gh-stats">
+            <div class="gh-stat"><span class="gh-num" id="gh-repos">–</span><span class="gh-lbl">public repos</span></div>
+            <div class="gh-stat"><span class="gh-num" id="gh-fol">–</span><span class="gh-lbl">followers</span></div>
+          </div>
+          <p class="gh-lbl2">top languages</p>
+          <div class="langbars" id="langbars"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ JOURNEY ══════════ -->
+  <section id="journey" class="section">
+    <div class="wrap">
+      <p class="eyebrow reveal">// experience &amp; education</p>
+      <h2 class="sec-title" data-scramble>the_journey</h2>
+      <div class="timeline">
+        <div class="tl-item reveal">
+          <div class="tl-dot"></div>
+          <div class="tl-body">
+            <span class="tl-date">jun 2025 — jul 2025</span>
+            <h3>Cybersecurity &amp; Digital Forensics Intern</h3>
+            <p class="tl-org">ISEA Phase III · MeitY · IGDTUW, New Delhi</p>
+            <p>Investigated ~700 GB of forensic images from 26 seized HDDs in the NEET 2017 case. Built a unified SIEM with ML-based anomaly detection (C++ log-parsing core, Python analytics) and completed CHFI-aligned digital forensics training.</p>
+            <div class="tl-tags"><span>digital forensics</span><span>SIEM</span><span>C++</span><span>ML</span></div>
+          </div>
+        </div>
+        <div class="tl-item reveal">
+          <div class="tl-dot"></div>
+          <div class="tl-body">
+            <span class="tl-date">2024 — 2028</span>
+            <h3>B.Tech, Computer Science &amp; Engineering</h3>
+            <p class="tl-org">Vivekananda Institute of Professional Studies, New Delhi — CGPA 8.95/10</p>
+            <p>Coursework across data structures, DBMS, discrete math and ML foundations, alongside security research and competitive programming.</p>
+            <div class="tl-tags"><span>DSA</span><span>DBMS</span><span>OS</span><span>ML</span></div>
+          </div>
+        </div>
+        <div class="tl-item reveal">
+          <div class="tl-dot"></div>
+          <div class="tl-body">
+            <span class="tl-date">2022 — 2024</span>
+            <h3>Class XII · Class X</h3>
+            <p class="tl-org">Banasthali Public School, New Delhi — 88% (XII) · 91% (X)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ CERTS ══════════ -->
+  <section id="certs" class="section">
+    <div class="wrap">
+      <p class="eyebrow reveal">// credentials</p>
+      <h2 class="sec-title" data-scramble>certifications</h2>
+      <p class="sec-sub reveal">Verified certificates &amp; achievements — click any card to view the original document.</p>
+      <div class="cert-grid" id="cert-grid"><!-- rendered by js --></div>
+    </div>
+  </section>
+
+  <!-- ══════════ CONTACT ══════════ -->
+  <section id="contact" class="section">
+    <div class="wrap contact-wrap">
+      <p class="eyebrow reveal">// contact</p>
+      <h2 class="sec-title" data-scramble>init_handshake</h2>
+      <p class="contact-lede reveal">Open to internships, security research collaborations, and interesting builds. My inbox is the fastest route — I reply within a day.</p>
+      <div class="contact-ctas reveal">
+        <a class="btn btn-primary" href="mailto:utsavgupta5467@gmail.com">utsavgupta5467@gmail.com</a>
+        <a class="btn btn-ghost" href="assets/resume/Utsav-Gupta-Resume.pdf" download>download résumé</a>
+      </div>
+      <div class="contact-links reveal">
+        <a href="https://github.com/Utsav-X-bit" target="_blank" rel="noopener">github ↗</a>
+        <a href="https://linkedin.com/in/utsav-gupta-098874322" target="_blank" rel="noopener">linkedin ↗</a>
+        <a href="https://codeforces.com/profile/Utsav-X-bit" target="_blank" rel="noopener">codeforces ↗</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap foot-inner">
+    <span><span class="prompt">utsav@x</span><span class="dim">:</span><span class="path">~/portfolio</span>$ ./goodbye — <span id="year"></span></span>
+    <span class="dim">hand-built · no templates · no trackers</span>
+  </div>
+</footer>
+
+<!-- ══════════ BREACH MODE ══════════ -->
+<div id="breach" aria-hidden="true">
+  <div class="breach-box">
+    <h2>[!] INTRUSION DETECTED</h2>
+    <p>unauthorized access attempt logged · tracing source…</p>
+    <div id="breach-log"></div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
