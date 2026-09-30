@@ -485,3 +485,48 @@
   // hint in console for the curious
   console.log("%cpsst — type 'hack' anywhere on this page. you didn't hear it from me.", "color:#22C55E;font-family:monospace");
 })();
+
+/* ═══════════ DOWNLOADS & DOC FALLBACKS ═══════════ */
+(function () {
+  "use strict";
+  const $$ = (s, c) => Array.from((c || document).querySelectorAll(s));
+
+  /* résumé: embedded base64 (binary upload not available via API) */
+  try {
+    if (typeof DATA !== "undefined" && DATA.resumeB64) {
+      const uri = "data:application/pdf;base64," + DATA.resumeB64;
+      $$('a[href="assets/resume/Utsav-Gupta-Resume.pdf"]').forEach(a => {
+        a.href = uri;
+        a.setAttribute("download", "Utsav-Gupta-Resume.pdf");
+      });
+    }
+  } catch (e) { /* leave static links as-is */ }
+
+  /* toast */
+  let toastEl = null, toastT = null;
+  function toast(msg) {
+    if (!toastEl) {
+      toastEl = document.createElement("div");
+      toastEl.className = "toast";
+      toastEl.setAttribute("role", "status");
+      document.body.appendChild(toastEl);
+    }
+    toastEl.textContent = msg;
+    toastEl.classList.add("on");
+    clearTimeout(toastT);
+    toastT = setTimeout(() => toastEl.classList.remove("on"), 3400);
+  }
+
+  /* cert cards: verify the document exists before opening */
+  document.addEventListener("click", e => {
+    const a = e.target.closest && e.target.closest("a.cert");
+    if (!a) return;
+    const url = a.getAttribute("href");
+    if (!url || url.indexOf("data:") === 0) return;
+    e.preventDefault();
+    fetch(url, { method: "HEAD" }).then(r => {
+      if (r.ok) window.open(url, "_blank", "noopener");
+      else toast("document syncing — this certificate file is being uploaded, check back soon.");
+    }).catch(() => window.open(url, "_blank", "noopener"));
+  });
+})();
