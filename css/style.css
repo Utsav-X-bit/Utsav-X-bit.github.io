@@ -271,7 +271,7 @@ footer { border-top: 1px solid var(--border); padding: 26px 0; font-size: 12.5px
   .section { padding: 76px 0; }
   .nav-links {
     position: fixed; top: 57px; right: 0; left: 0; flex-direction: column; gap: 0;
-    background: rgba(10,15,30,.97); border-bottom: 1px solid var(--border);
+    background: var(--bg-deep); border-bottom: 1px solid var(--border);
     max-height: 0; overflow: hidden; transition: max-height .3s ease; align-items: stretch;
   }
   .nav-links.open { max-height: 340px; }
