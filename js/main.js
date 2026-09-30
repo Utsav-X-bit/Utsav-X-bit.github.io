@@ -722,10 +722,12 @@
   "use strict";
   const $$ = (s, c) => Array.from((c || document).querySelectorAll(s));
 
-  /* résumé: embedded base64 (binary upload not available via API) */
+  /* résumé: embedded base64 chunks (single CLI arg capped at 128KB) */
   try {
-    if (typeof DATA !== "undefined" && DATA.resumeB64) {
-      const uri = "data:application/pdf;base64," + DATA.resumeB64;
+    const rb64 = (typeof DATA !== "undefined" && DATA.resumeB64) ? DATA.resumeB64
+      : ((window.__RB64_A || "") + (window.__RB64_B || "") + (window.__RB64_C || ""));
+    if (rb64) {
+      const uri = "data:application/pdf;base64," + rb64;
       $$('a[href="assets/resume/Utsav-Gupta-Resume.pdf"]').forEach(a => {
         a.href = uri;
         a.setAttribute("download", "Utsav-Gupta-Resume.pdf");
