@@ -46,6 +46,34 @@ const DATA = {
       }
     },
     {
+      name: "CyberChakshu",
+      url: "https://github.com/makunno/CyberChakshu",
+      language: "Python",
+      updated: "Sep 2026",
+      tag: "SIEM · security analytics",
+      desc: "SIEM + digital forensics platform I contributed to during my ISEA internship. It ingests logs across 56+ formats, detects attacks with a rule engine plus an ML classifier, maps everything to MITRE ATT&CK, correlates multi-source events into attack chains, and ships a forensic disk-analysis pipeline alongside an AI SOC analyst.",
+      details: {
+        features: ["56+ log parsers across FTP, web, DB, firewall, SSH and mail formats", "ML attack detection (Random Forest, 25 features) plus rule-based engine", "MITRE ATT&CK tactic/technique mapping with confidence scoring", "Multi-log correlation builds attack chains with risk scores", "SOC Analyst AI (Llama 3.1) for threat assessment with analyst feedback loop", "Digital forensics pipeline: disk images to IoCs to JSON/HTML/PDF reports", "Dual backends: FastAPI locally, Hono on Cloudflare Workers; React + PySide6 desktop GUIs"],
+        stack: ["Python", "React", "FastAPI", "Cloudflare Workers", "scikit-learn"],
+        arch: { stages: [{ name: "ingest", nodes: [{ id: "upload", label: "log upload", sub: "text \u00b7 file \u00b7 multi-file", kind: "ui" }, { id: "diskimg", label: "disk image", sub: "e01 \u00b7 dd \u00b7 raw \u00b7 img", kind: "data" }] }, { name: "parse", nodes: [{ id: "autodetect", label: "auto-detect", sub: "regex + structure", kind: "engine" }, { id: "parsers", label: "56+ log parsers", sub: "typed ParsedLogEntry", kind: "engine" }] }, { name: "detect", nodes: [{ id: "rules", label: "rule engine", sub: "SQLi \u00b7 XSS \u00b7 brute-force", kind: "engine" }, { id: "mlclf", label: "ML classifier", sub: "random forest \u00b7 25 feats", kind: "engine" }] }, { name: "enrich", nodes: [{ id: "mitre", label: "MITRE mapper", sub: "tactics \u00b7 techniques", kind: "data" }, { id: "risk", label: "risk scorer", sub: "severity \u00b7 confidence", kind: "engine" }] }, { name: "correlate", nodes: [{ id: "chains", label: "attack chains", sub: "cross-source correlation", kind: "engine" }] }, { name: "surface", nodes: [{ id: "dash", label: "React dashboard", sub: "alerts \u00b7 log viewer", kind: "ui" }, { id: "socai", label: "SOC analyst AI", sub: "llama 3.1 \u00b7 openrouter", kind: "agent" }, { id: "forpipe", label: "forensic pipeline", sub: "extract \u00b7 IoC hunt", kind: "engine" }, { id: "forreport", label: "forensic report", sub: "json \u00b7 html \u00b7 pdf", kind: "data" }] }], flows: [["upload","autodetect","log text"], ["autodetect","parsers","typed"], ["parsers","rules","entries"], ["parsers","mlclf","entries"], ["rules","mitre","hits"], ["mlclf","mitre","hits"], ["mitre","risk","tagged"], ["risk","chains","scored"], ["chains","dash","alerts"], ["chains","socai","investigate"], ["diskimg","forpipe","image"], ["forpipe","forreport","findings"]] },
+        size: null
+      }
+    },
+    {
+      name: "MiniRelDB",
+      url: "https://github.com/ronakgupta03/MiniRelDB",
+      language: "Java",
+      updated: "Apr 2026",
+      tag: "database engine",
+      desc: "From-scratch relational database engine in Java \u2014 no SQLite. Hand-written SQL parser, Volcano-iterator query plan tree, B+ tree indexes (in-memory + disk), WAL with an LSM memtable flushing to SSTables, 4KB slotted pages, an LRU buffer pool and a persisted catalog. I heavily optimized the engine: a single +3.8k/\u22120.3k diff across the query, index and storage layers.",
+      details: {
+        features: ["Real storage engine: 4KB pages, heap files, WAL, LSM memtable flushed to SSTables", "Hand-written top-down SQL parser (INSERT / SELECT / UPDATE / DELETE)", "Volcano iterator plan tree: scan, filter, index-nested-loop join, subqueries", "B+ tree indexes (in-memory + disk) with bloom-filter SSTable skips", "LRU buffer pool over a RandomAccessFile disk manager", "Catalog manager with persisted schemas; crash recovery replays the WAL", "benchmark.py harness for measuring engine performance"],
+        stack: ["Java", "B+ Tree", "WAL", "LSM-tree", "Volcano iterators"],
+        arch: { stages: [{ name: "interface", nodes: [{ id: "console", label: "db console", sub: "REPL \u00b7 USE db", kind: "ui" }] }, { name: "parse", nodes: [{ id: "parser", label: "SQL parser", sub: "hand-written top-down", kind: "engine" }] }, { name: "plan", nodes: [{ id: "plan", label: "plan tree", sub: "volcano iterators", kind: "engine" }] }, { name: "execute", nodes: [{ id: "executor", label: "executor", sub: "orchestrates all layers", kind: "engine" }] }, { name: "index", nodes: [{ id: "btree", label: "B+ tree", sub: "key \u2192 pageId", kind: "engine" }, { id: "diskbtree", label: "disk B+ tree", sub: "persistent index", kind: "engine" }, { id: "bloom", label: "bloom filter", sub: "sstable skip", kind: "data" }] }, { name: "storage", nodes: [{ id: "wal", label: "write-ahead log", sub: "crash-safe writes", kind: "data" }, { id: "memtable", label: "memtable", sub: "LSM treemap", kind: "data" }, { id: "heap", label: "heap pages", sub: "4kb slotted pages", kind: "engine" }, { id: "buffer", label: "buffer pool", sub: "LRU page cache", kind: "data" }, { id: "catalog", label: "catalog", sub: "persisted schemas", kind: "data" }] }], flows: [["console","parser","SQL text"], ["parser","plan","query objects"], ["plan","executor","open \u00b7 next \u00b7 close"], ["executor","btree","point lookup"], ["executor","diskbtree","range scan"], ["executor","bloom","mightContain"], ["bloom","heap","skip SSTables"], ["btree","heap","pageId"], ["executor","wal","log write"], ["wal","memtable","replay"], ["memtable","heap","flush \u2192 SSTable"], ["executor","buffer","cache pages"], ["executor","catalog","schemas"]] },
+        size: null
+      }
+    },
+    {
       name: "TuxPages",
       url: "https://github.com/Utsav-X-bit/TuxPages",
       language: "TypeScript",
