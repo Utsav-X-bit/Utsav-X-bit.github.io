@@ -432,7 +432,7 @@ footer { border-top: 1px solid var(--border); padding: 26px 0; font-size: 12.5px
 .pm-stat span { font-size: 10.5px; color: var(--dim); text-transform: uppercase; letter-spacing: .1em; }
 .pm-h { padding: 26px 34px 12px; font-size: 14px; color: var(--accent); }
 .pm-arch { margin: 0 34px; padding: 18px 10px; border: 1px solid var(--border); border-radius: 12px; background: rgba(10,17,32,.6); overflow-x: auto; }
-.pm-arch svg { display: block; width: auto; height: auto; margin: 0 auto; }
+.pm-arch svg { display: block; width: auto; max-width: 100%; height: auto; margin: 0 auto; }
 .pm-feats { list-style: none; padding: 0 34px; display: flex; flex-direction: column; gap: 9px; }
 .pm-feats li { font-size: 13.5px; color: var(--muted); padding-left: 22px; position: relative; line-height: 1.55; }
 .pm-feats li::before { content: "▸"; color: var(--accent); position: absolute; left: 2px; }
