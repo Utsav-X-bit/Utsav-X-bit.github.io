@@ -390,6 +390,103 @@
   /* ═══ PROJECT DEEP-DIVE MODAL ═══ */
   const modal = $("#proj-modal"), pmBox = modal.querySelector(".pmodal-box");
   let lastFocus = null;
+  /* ═══ STAGED ARCHITECTURE DIAGRAMS ═══
+     spec: { stages:[{name, nodes:[{id,label,sub,kind}]}], flows:[[fromId,toId,label?]] }
+     kinds: agent · engine · data · ext · gate · ui  (color-coded, legend included) */
+  const KIND_C = { agent: "#22C55E", engine: "#22d3ee", data: "#a78bfa", ext: "#f59e0b", gate: "#fb7185", ui: "#60a5fa" };
+  const KIND_N = { agent: "LLM agent", engine: "deterministic tool", data: "data / artifact", ext: "external system", gate: "human gate", ui: "interface" };
+  const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  function archDiagram(spec) {
+    if (Array.isArray(spec)) return archSVG(spec, false);
+    const NW = 172, NH = 70, GX = 52, PAD = 28, BGAP = 62, LBLH = 26;
+    const stages = spec.stages || [], flows = spec.flows || [];
+    const pos = {};
+    let maxN = 1;
+    stages.forEach(st => { maxN = Math.max(maxN, st.nodes.length); });
+    const bandW = maxN * (NW + GX) - GX, W = PAD * 2 + bandW;
+    stages.forEach((st, si) => {
+      const y = PAD + si * (NH + LBLH + BGAP) + LBLH;
+      const off = (bandW - (st.nodes.length * (NW + GX) - GX)) / 2;
+      st.nodes.forEach((n, ni) => {
+        const x = PAD + off + ni * (NW + GX);
+        pos[n.id] = { x, y, cx: x + NW / 2, cy: y + NH / 2, n };
+      });
+    });
+    const H = PAD * 2 + stages.length * (NH + LBLH + BGAP) - BGAP + 40;
+    const tri = (x, y, d) => {
+      const p = { down: [[x - 6, y - 9], [x + 6, y - 9], [x, y]], up: [[x - 6, y + 9], [x + 6, y + 9], [x, y]],
+                  right: [[x - 9, y - 6], [x - 9, y + 6], [x, y]], left: [[x + 9, y - 6], [x + 9, y + 6], [x, y]] }[d];
+      return '<polygon points="' + p.map(q => q.join(",")).join(" ") + '" fill="#94a3b8"/>';
+    };
+    const wrap2 = label => {
+      const words = String(label).split(" "), lines = [];
+      let cur = "";
+      words.forEach(w => { if ((cur + " " + w).trim().length > 20 && cur) { lines.push(cur.trim()); cur = w; } else cur += " " + w; });
+      if (cur.trim()) lines.push(cur.trim());
+      return lines.slice(0, 2);
+    };
+    let s = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="project architecture diagram">';
+    // stage bands
+    stages.forEach((st, si) => {
+      const y = PAD + si * (NH + LBLH + BGAP);
+      s += '<rect x="' + (PAD - 14) + '" y="' + y + '" width="' + (bandW + 28) + '" height="' + (NH + LBLH + 22) + '" rx="12" fill="none" stroke="#1e293b" stroke-width="1" stroke-dasharray="5 5"/>';
+      s += '<text x="' + (PAD - 4) + '" y="' + (y + 16) + '" fill="#22C55E" font-size="11" font-family="monospace">' + esc("0" + (si + 1) + " · " + st.name) + "</text>";
+    });
+    // edges (under nodes)
+    flows.forEach(fl => {
+      const A = pos[fl[0]], B = pos[fl[1]];
+      if (!A || !B) return;
+      let d, mx, my, dir;
+      if (B.y > A.y + 1) {          // downward
+        const y1 = A.y + NH, y2 = B.y;
+        d = "M" + A.cx + "," + y1 + " C" + A.cx + "," + (y1 + 38) + " " + B.cx + "," + (y2 - 38) + " " + B.cx + "," + (y2 - 2);
+        mx = (A.cx + B.cx) / 2; my = (y1 + y2) / 2; dir = "down";
+        s += '<path d="' + d + '" fill="none" stroke="#475569" stroke-width="1.6"/>' + tri(B.cx, B.y - 2, "down");
+      } else if (B.y < A.y - 1) {   // upward: route around the left margin
+        const x0 = 12, x1 = A.x, y1 = A.cy, x2 = B.x, y2 = B.cy;
+        d = "M" + x1 + "," + y1 + " C" + x0 + "," + y1 + " " + x0 + "," + y2 + " " + (x2 - 2) + "," + y2;
+        mx = x0 + 2; my = (y1 + y2) / 2; dir = "right";
+        s += '<path d="' + d + '" fill="none" stroke="#475569" stroke-width="1.6" stroke-dasharray="7 5"/>' + tri(x2 - 2, y2, "right");
+      } else {                       // same band: arc over the top (labels never clip)
+        const sx = A.x + NW - 24, ex = B.x + 24, ty = A.y, peak = ty - 38;
+        d = "M" + sx + "," + ty + " C" + sx + "," + peak + " " + ex + "," + peak + " " + ex + "," + (ty - 2);
+        mx = (sx + ex) / 2; my = peak + 18; dir = "down";
+        s += '<path d="' + d + '" fill="none" stroke="#475569" stroke-width="1.6"/>' + tri(ex, ty - 2, "down");
+      }
+      if (fl[2]) {
+        const lb = esc(fl[2]), wpx = lb.length * 6.4 + 16;
+        const lx = dir === "right" && B.y < A.y - 1 ? mx + wpx / 2 + 4 : mx; // nudge loop labels off the margin line
+        s += '<rect x="' + (lx - wpx / 2) + '" y="' + (my - 10) + '" width="' + wpx + '" height="20" rx="10" fill="#0b1220" stroke="#334155" stroke-width="1"/>';
+        s += '<text x="' + lx + '" y="' + (my + 4) + '" text-anchor="middle" fill="#94a3b8" font-size="10.5" font-family="monospace">' + lb + "</text>";
+      }
+    });
+    // nodes
+    Object.keys(pos).forEach(id => {
+      const P = pos[id], n = P.n, c = KIND_C[n.kind] || "#22C55E";
+      s += '<rect x="' + P.x + '" y="' + P.y + '" width="' + NW + '" height="' + NH + '" rx="10" fill="#0d1526" stroke="' + c + '" stroke-width="1.5"/>';
+      s += '<rect x="' + P.x + '" y="' + P.y + '" width="4" height="' + NH + '" rx="2" fill="' + c + '"/>';
+      const lines = wrap2(n.label);
+      lines.forEach((ln, li) => {
+        s += '<text x="' + P.cx + '" y="' + (P.y + 26 + li * 16) + '" text-anchor="middle" fill="#e2e8f0" font-size="12.5" font-family="monospace">' + esc(ln) + "</text>";
+      });
+      if (n.sub) {
+        let sub = String(n.sub);
+        if (sub.length > 27) sub = sub.slice(0, 26) + "…";
+        s += '<text x="' + P.cx + '" y="' + (P.y + NH - 12) + '" text-anchor="middle" fill="#64748b" font-size="10" font-family="monospace">' + esc(sub) + "</text>";
+      }
+    });
+    // legend
+    const used = [];
+    Object.keys(pos).forEach(id => { const k = pos[id].n.kind; if (k && used.indexOf(k) < 0) used.push(k); });
+    let lx = W / 2 - (used.map(k => KIND_N[k].length * 6.4 + 26).reduce((a, b) => a + b, 0)) / 2;
+    used.forEach(k => {
+      const wpx = KIND_N[k].length * 6.4 + 26;
+      s += '<circle cx="' + (lx + 8) + '" cy="' + (H - 16) + '" r="5" fill="' + KIND_C[k] + '"/>';
+      s += '<text x="' + (lx + 19) + '" y="' + (H - 12) + '" fill="#64748b" font-size="10.5" font-family="monospace">' + KIND_N[k] + "</text>";
+      lx += wpx;
+    });
+    return s + "</svg>";
+  }
   function archSVG(nodes, loop) {
     const nW = 148, nH = 56, gapX = 52, padX = 24, topY = 24;
     const W = padX * 2 + nodes.length * nW + (nodes.length - 1) * gapX;
@@ -429,7 +526,7 @@
     if (d.size) stats.push(["repo size", d.size]);
     if (d.features) stats.push(["key features", d.features.length]);
     $("#pm-stats").innerHTML = stats.map(([k, v]) => '<div class="pm-stat"><b>' + v + "</b><span>" + k + "</span></div>").join("");
-    $("#pm-arch").innerHTML = d.arch ? archSVG(d.arch, d.loop) : "<p class='dim'>no diagram</p>";
+    $("#pm-arch").innerHTML = d.arch ? archDiagram(d.arch) : "<p class='dim'>no diagram</p>";
     $("#pm-feats").innerHTML = (d.features || []).map(f => "<li>" + f + "</li>").join("");
     $("#pm-stack").innerHTML = (d.stack || []).map(t => "<span>" + t + "</span>").join("");
     lastFocus = document.activeElement;

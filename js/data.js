@@ -27,8 +27,21 @@ const DATA = {
       details: {
         features: ["Planner LLM selects attack strategies per target", "Generator writes concise attack prompts", "Deterministic 4-signal ladder verifies extracted secrets - no LLM judge", "CLI plus FastAPI/React dashboard", "FAISS-backed self-improving memory loop", "Backends: vLLM, Ollama, HuggingFace and cloud APIs", "Evaluation runs tuned with HPC practices on DGX A100 hardware"],
         stack: ["Python", "vLLM", "Ollama", "FastAPI", "React", "FAISS"],
-        arch: ["planner LLM", "attack generator", "target model", "4-signal verifier", "FAISS memory"],
-        loop: true,
+        arch: { stages: [{ name: "interface", nodes: [{ id: "cli", label: "CLI", sub: "run red-team sessions", kind: "ui" }, { id: "dash", label: "dashboard", sub: "FastAPI + React", kind: "ui" }] }, { name: "orchestration", nodes: [{ id: "planner", label: "planner LLM", sub: "picks attack strategy", kind: "agent" }] }, { name: "execution", nodes: [{ id: "gen", label: "attack generator", sub: "writes concise prompts", kind: "agent" }, { id: "target", label: "target model", sub: "vLLM · Ollama · HF · cloud", kind: "ext" }] }, { name: "verification", nodes: [{ id: "ladder", label: "4-signal ladder", sub: "deterministic · no LLM judge", kind: "engine" }] }, { name: "memory", nodes: [{ id: "faiss", label: "FAISS memory", sub: "self-improving store", kind: "data" }] }], flows: [["cli","planner","start session"], ["dash","planner","start session"], ["planner","gen","strategy"], ["gen","target","attack prompts"], ["target","ladder","responses"], ["ladder","faiss","verified secrets"], ["faiss","planner","recall"]] },
+        size: null
+      }
+    },
+    {
+      name: "SchemaForge",
+      url: "https://github.com/ronakgupta03/schemaforge",
+      language: "Python",
+      updated: "Aug 2026",
+      tag: "AI agent · databases",
+      desc: "Autonomous, AST-aware, zero-downtime database migration & refactoring agent built on the TrueForge harness (Agent Harness Hackathon). A root agent spawns parallel db/code analysis subagents, a deterministic engine merges their facts into an impact graph (tables → ORM models → attributes → endpoints), the migration is proven inside a sandbox, and production is only touched after a human approval gate — applied in one transaction with full rollback.",
+      details: {
+        features: ["Root agent spawns parallel db-analysis + code-analysis subagents", "Deterministic impact graph: tables → ORM models → attributes → endpoints", "Sandbox verification: Alembic migration, data-parity checks, pytest, EXPLAIN ANALYZE", "Human approval gate — mechanical, enforced via destructiveHint on write tools", "Single-transaction apply with full rollback on any failure", "Two-phase expand/contract workflow for zero-downtime migrations", "Guarded downgrades that refuse to fabricate data", "MCP servers for Postgres and GitHub; Daytona sandbox execution", "Per-session evidence artifacts: graph, report, SQL, diff, verify.json"],
+        stack: ["Python", "TrueForge", "MCP", "Daytona", "Alembic", "PostgreSQL", "DeepSeek"],
+        arch: { stages: [{ name: "interface", nodes: [{ id: "prompt", label: "user prompt", sub: "e.g. split users table", kind: "ext" }, { id: "chat", label: "TrueForge chat UI", sub: "evidence tabs · :8790", kind: "ui" }] }, { name: "agent swarm", nodes: [{ id: "root", label: "root agent", sub: "deepseek-v4-flash", kind: "agent" }, { id: "dba", label: "db-analysis", sub: "postgres-prod MCP", kind: "agent" }, { id: "codea", label: "code-analysis", sub: "Daytona · AST parse", kind: "agent" }] }, { name: "deterministic engine", nodes: [{ id: "core", label: "schemaforge_core", sub: "ast + information_schema", kind: "engine" }, { id: "graph", label: "impact graph", sub: "JSON + Mermaid", kind: "data" }] }, { name: "sandbox verify", nodes: [{ id: "verify", label: "sf-pipeline verify", sub: "alembic · parity · pytest", kind: "engine" }] }, { name: "safety gate", nodes: [{ id: "gate", label: "human approval", sub: "destructiveHint pauses", kind: "gate" }] }, { name: "apply", nodes: [{ id: "prod", label: "prod postgres", sub: "one txn · rollback", kind: "ext" }, { id: "pr", label: "GitHub PR", sub: "migration + code", kind: "ext" }] }], flows: [["prompt","root","migration request"], ["root","dba","spawns"], ["root","codea","spawns"], ["dba","core","table facts"], ["codea","core","code facts"], ["core","graph","merge"], ["graph","verify","migration + code"], ["verify","gate","PASS ×4"], ["gate","prod","approve"], ["prod","pr","open PR"], ["graph","chat","Mermaid SVG"], ["verify","chat","evidence artifacts"]] },
         size: null
       }
     },
@@ -42,8 +55,7 @@ const DATA = {
       details: {
         features: ["Decoupled frontend/backend architecture", "Next.js 16 + TipTap rich-text editor", "Hono TypeScript API on Cloudflare Workers", "PostgreSQL (Neon) with Drizzle ORM", "OTP passwordless auth via Brevo", "JWT cookie sessions, comments and post voting"],
         stack: ["TypeScript", "Next.js 16", "TipTap", "Hono", "Cloudflare Workers", "PostgreSQL", "Drizzle"],
-        arch: ["Next.js + TipTap", "Hono API", "Cloudflare Workers", "PostgreSQL"],
-        loop: false,
+        arch: { stages: [{ name: "client", nodes: [{ id: "web", label: "Next.js frontend", sub: "TipTap rich-text editor", kind: "ui" }] }, { name: "edge", nodes: [{ id: "hono", label: "Hono API", sub: "TypeScript · on CF Workers", kind: "engine" }, { id: "brevo", label: "Brevo", sub: "OTP passwordless", kind: "ext" }] }, { name: "data", nodes: [{ id: "pg", label: "PostgreSQL", sub: "Neon · Drizzle ORM", kind: "data" }] }], flows: [["web","hono","REST · JWT cookie"], ["hono","pg","Drizzle ORM"], ["hono","brevo","OTP email"]] },
         size: null
       }
     },
@@ -53,12 +65,11 @@ const DATA = {
       language: "Python",
       updated: "Sep 2025",
       tag: "cryptography",
-      desc: "Hybrid cryptographically-secure PRNG built on BLAKE3 with external entropy sources. Ships a NumPy/SciPy statistical validation suite (chi-square, runs test, autocorrelation) and passes all 17 NIST randomness tests. Backed by an IIT Roorkee-approved report.",
+      desc: "Hybrid cryptographically-secure PRNG built on BLAKE3 with external entropy sources. Ships a NumPy/SciPy statistical validation suite (chi-square, runs test, autocorrelation) built around the NIST STS randomness battery.",
       details: {
         features: ["Hybrid CSPRNG built on BLAKE3", "External entropy sources (os.urandom, time)", "NumPy/SciPy statistical validation suite", "Chi-square, runs test and autocorrelation checks", "Passes all 17 NIST randomness tests"],
         stack: ["Python", "BLAKE3", "NumPy", "SciPy"],
-        arch: ["entropy pool", "BLAKE3 core", "reseed mixer", "NIST STS - 17/17"],
-        loop: false,
+        arch: { stages: [{ name: "entropy", nodes: [{ id: "urandom", label: "os.urandom", sub: "OS entropy", kind: "ext" }, { id: "clock", label: "time-based", sub: "auxiliary entropy", kind: "ext" }] }, { name: "core", nodes: [{ id: "pool", label: "entropy pool", sub: "accumulates seed", kind: "data" }, { id: "blake3", label: "BLAKE3 core", sub: "hash-based DRBG", kind: "engine" }, { id: "mixer", label: "reseed mixer", sub: "forward secrecy", kind: "engine" }] }, { name: "output", nodes: [{ id: "stream", label: "output stream", sub: "random bytes", kind: "data" }] }, { name: "validation", nodes: [{ id: "nist", label: "NIST STS", sub: "randomness battery", kind: "engine" }, { id: "stats", label: "SciPy suite", sub: "chi-square · runs", kind: "engine" }] }], flows: [["urandom","pool","seed"], ["clock","pool","seed"], ["pool","blake3","reseed"], ["blake3","mixer","hash"], ["mixer","stream","bytes"], ["stream","nist","test vectors"], ["stream","stats","test vectors"]] },
         size: "92 MB"
       }
     },
@@ -72,8 +83,7 @@ const DATA = {
       details: {
         features: ["Modular 2D platformer engine in C", "Input handling, gravity/collision physics", "Texture and font asset management", "Fixed-timestep game loop", "Graphical Tic-Tac-Toe with unbeatable Minimax AI"],
         stack: ["C", "SDL2"],
-        arch: ["fixed-timestep loop", "physics + collision", "SDL2 renderer", "minimax AI"],
-        loop: false,
+        arch: { stages: [{ name: "game loop", nodes: [{ id: "tick", label: "fixed-timestep loop", sub: "60 Hz update", kind: "engine" }] }, { name: "simulation", nodes: [{ id: "input", label: "input handling", sub: "keyboard + mouse", kind: "engine" }, { id: "physics", label: "physics + collision", sub: "gravity · AABB", kind: "engine" }, { id: "ai", label: "minimax AI", sub: "tic-tac-toe", kind: "engine" }] }, { name: "presentation", nodes: [{ id: "assets", label: "asset manager", sub: "textures · fonts", kind: "data" }, { id: "sdl", label: "SDL2 renderer", sub: "presents frame", kind: "ext" }] }], flows: [["tick","input","poll"], ["tick","physics","step"], ["input","physics","actions"], ["physics","sdl","draw calls"], ["assets","sdl","blit"], ["tick","ai","compute move"]] },
         size: "377 MB"
       }
     },
@@ -87,8 +97,7 @@ const DATA = {
       details: {
         features: ["Parses heterogeneous log files via regex rules", "C++ parsing core", "Normalized CSV output (e.g. Linux auth logs)", "Sample logs and parsed outputs included in repo"],
         stack: ["C++", "regex"],
-        arch: ["raw logs", "regex rules", "C++ parse core", "CSV output"],
-        loop: false,
+        arch: { stages: [{ name: "input", nodes: [{ id: "logs", label: "raw logs", sub: "auth.log · heterogeneous", kind: "data" }, { id: "rules", label: "regex rules", sub: "per-format patterns", kind: "data" }] }, { name: "parse", nodes: [{ id: "core", label: "C++ parse core", sub: "regex engine", kind: "engine" }] }, { name: "output", nodes: [{ id: "csv", label: "normalized CSV", sub: "unified schema", kind: "data" }, { id: "siem", label: "unified SIEM", sub: "ISEA internship core", kind: "ext" }] }], flows: [["logs","core","lines"], ["rules","core","patterns"], ["core","csv","rows"], ["csv","siem","ingest"]] },
         size: "274 KB"
       }
     },
@@ -102,8 +111,7 @@ const DATA = {
       details: {
         features: ["Operates at the Linux kernel input layer", "Reads the physical mouse via evdev", "Sliding-window detector distinguishes spam-clicking from holding", "Injects extra clicks through a uinput virtual device", "Boosts 3-4 CPS to 12-14 CPS", "Works on Wayland, X11 and TTY", "Hotkey toggle plus systemd service"],
         stack: ["Python", "evdev", "uinput", "systemd"],
-        arch: ["evdev mouse in", "sliding-window detector", "uinput injector"],
-        loop: false,
+        arch: { stages: [{ name: "capture", nodes: [{ id: "mouse", label: "physical mouse", sub: "evdev", kind: "ext" }] }, { name: "detect", nodes: [{ id: "window", label: "sliding window", sub: "spam vs hold", kind: "engine" }] }, { name: "inject", nodes: [{ id: "uinput", label: "uinput device", sub: "Wayland · X11 · TTY", kind: "ext" }] }, { name: "control", nodes: [{ id: "hotkey", label: "toggle hotkey", sub: "on / off", kind: "ui" }, { id: "svc", label: "systemd service", sub: "daemon", kind: "ext" }] }], flows: [["mouse","window","click events"], ["hotkey","window","toggle"], ["svc","window","supervises"], ["window","uinput","extra clicks"]] },
         size: "27 KB"
       }
     },
@@ -117,8 +125,7 @@ const DATA = {
       details: {
         features: ["Classifies 40 medicinal plant species from images", "200 training images per species", "~70% accuracy", "Python inference script included"],
         stack: ["Python", "machine learning"],
-        arch: ["leaf images", "CNN model", "40-species classifier"],
-        loop: false,
+        arch: { stages: [{ name: "data", nodes: [{ id: "leaves", label: "leaf images", sub: "200 per species", kind: "data" }] }, { name: "train", nodes: [{ id: "cnn", label: "CNN classifier", sub: "custom-trained", kind: "engine" }] }, { name: "infer", nodes: [{ id: "model", label: "40-species model", sub: "~70% accuracy", kind: "data" }, { id: "script", label: "inference script", sub: "Python CLI", kind: "ui" }] }], flows: [["leaves","cnn","train"], ["cnn","model","weights"], ["model","script","load"]] },
         size: null
       }
     },
@@ -132,8 +139,7 @@ const DATA = {
       details: {
         features: ["Maintained collection of web-automation scripts", "OpenBullet / OpenBullet2 / SilverBullet", "Cookie and session handling", "Modular, reusable workflows", "Documented usage"],
         stack: ["OpenBullet", "SilverBullet"],
-        arch: ["task scripts", "sessions + cookies", "automation runners"],
-        loop: false,
+        arch: { stages: [{ name: "author", nodes: [{ id: "tasks", label: "task scripts", sub: "OpenBullet2 · SilverBullet", kind: "data" }] }, { name: "session", nodes: [{ id: "sess", label: "session manager", sub: "cookies · state", kind: "engine" }] }, { name: "run", nodes: [{ id: "runners", label: "automation runners", sub: "modular workflows", kind: "engine" }] }], flows: [["tasks","runners","load"], ["sess","runners","attach"], ["runners","sess","persist"]] },
         size: "82 KB"
       }
     }
