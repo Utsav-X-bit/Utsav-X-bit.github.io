@@ -93,6 +93,7 @@
 
   /* ═══ TYPED ROLES (hero) ═══ */
   const roles = [
+    "llm inference engineer",
     "cybersecurity researcher",
     "cryptography engineer",
     "game developer",
@@ -362,7 +363,7 @@
   }, { passive: true });
 
   /* ── marquee content (duplicated for seamless loop) ── */
-  const items = ["LLM red-teaming", "BLAKE3 CSPRNG", "game engines", "digital forensics", "competitive programming", "full-stack", "systems hacking"];
+  const items = ["LLM inference", "vLLM · llama.cpp · ollama", "CUDA programming", "LLM red-teaming", "BLAKE3 CSPRNG", "HPC", "game engines", "digital forensics", "competitive programming", "agent harnessing"];
   const half = items.map(t => `<span><b>✦</b>&nbsp; ${t}</span>`).join("");
   $("#marquee-track").innerHTML = half + half;
 

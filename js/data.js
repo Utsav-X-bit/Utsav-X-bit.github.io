@@ -23,7 +23,7 @@ const DATA = {
       updated: "Sep 2026",
       featured: true,
       tag: "LLM security research",
-      desc: "Automated red-teaming framework for LLMs. A planner model picks attack strategies, a generator writes concise attack prompts, and a deterministic 4-signal ladder verifies extracted secrets with no LLM judge. Ships with CLI, FastAPI/React dashboard, FAISS-backed self-improving memory, and support for vLLM, Ollama, HuggingFace and cloud APIs."
+      desc: "Automated red-teaming framework for LLMs. A planner model picks attack strategies, a generator writes concise attack prompts, and a deterministic 4-signal ladder verifies extracted secrets with no LLM judge. Ships with CLI, FastAPI/React dashboard, FAISS-backed self-improving memory, and support for vLLM, Ollama, HuggingFace and cloud APIs — tuned with HPC practices for large-scale evaluation runs."
     },
     {
       name: "TuxPages",
@@ -145,10 +145,7 @@ const DATA = {
     { file: "assets/certs/cert-08.pdf", title: "Mathematical Foundations for Machine Learning", issuer: "NPTEL", year: "2025" },
     { file: "assets/certs/cert-05.pdf", title: "Getting Started with Competitive Programming", issuer: "NPTEL", year: "2025" },
     { file: "assets/certs/cert-03.pdf", title: "Discrete Mathematics", issuer: "NPTEL", year: "2025" },
-    { file: "assets/certs/cert-09.pdf", title: "Getting Started with Linux Fundamentals (RH104)", issuer: "Red Hat", year: "2025" },
-    { file: "assets/certs/cert-10.jpg", title: "Empower your Privacy with FOSS — Workshop", issuer: "CODEX Code Club · VIPS", year: "2025" },
-    { file: "assets/certs/cert-11.jpg", title: "Code Clash 2.0 Hackathon — Team Null Pointers", issuer: "CodeClash", year: "2025" },
-    { file: "assets/certs/cert-12.jpeg", title: "HackWithIndia — Build It Tour Noida", issuer: "HackWithIndia", year: "2025" }
+    { file: "assets/certs/cert-09.pdf", title: "Getting Started with Linux Fundamentals (RH104)", issuer: "Red Hat", year: "2025" }
   ],
 
   /* résumé PDF embedded as base64 (binary upload unavailable via API) */
