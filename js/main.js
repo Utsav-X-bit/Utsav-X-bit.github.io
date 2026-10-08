@@ -94,7 +94,7 @@
 
   /* ═══ TYPED ROLES (hero) ═══ */
   const roles = [
-    "llm inference engineer",
+    "llm inferencer",
     "cybersecurity enthusiast",
     "cryptography tinkerer",
     "game developer",
