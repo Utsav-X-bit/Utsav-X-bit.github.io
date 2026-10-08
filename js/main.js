@@ -575,6 +575,71 @@
     });
   }, { rootMargin: "-40% 0px -55% 0px" });
   secIds.forEach(id => { const s = document.getElementById(id); if (s) secObs.observe(s); });
+
+  /* ═══════════ LIVE ARENA — CF / GitHub / Codolio (CORS-open APIs) ═══════════
+     Static DATA above is the fallback; each fetch below overwrites on success.
+     All endpoints verified ACAO:* — no proxy, no Actions build, always current. */
+  const API = { cache: "no-store" };
+  const dayKey = t => { const d = new Date(t); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+  const windowCut = () => dayKey(Date.now() - 370 * 864e5); // matches renderHeatmap's 53-week grid
+  function setStat(sel, v) {
+    const el = $(sel);
+    if (!el || typeof v !== "number" || isNaN(v)) return;
+    el.dataset.count = v;               // count-up target (observed in the WOW layer)
+    if (el.textContent !== "0") el.textContent = String(v); // already animated → write directly
+  }
+  function redrawHeat(elId, pairs, prefix, noun, totalSel, daysSel) {
+    const el = document.getElementById(elId);
+    if (!el || !pairs.length) return;
+    el.innerHTML = "";                  // renderHeatmap appends; clear the static SVG first
+    const s = renderHeatmap(elId, pairs, prefix, noun);
+    if (s) { $(totalSel).textContent = s.total; $(daysSel).textContent = s.days; }
+  }
+  function renderCodolio(total, rows) {
+    const t = $("#cod-total"); if (t) t.textContent = total;
+    const box = $("#cod-plats");
+    if (box) box.innerHTML = rows.map(r => "<span>" + esc(r[0]) + " <b>" + r[1] + "</b></span>").join("");
+  }
+  renderCodolio(DATA.codolio.total, DATA.codolio.plats); // paints instantly, live refresh follows
+
+  // Codeforces — rating stats, contest count, rating chart, submission heatmap
+  fetch("https://codeforces.com/api/user.info?handles=Utsav-X-bit", API).then(r => r.json()).then(j => {
+    const u = (j.result || [])[0]; if (!u) return;
+    setStat("#cf-cur", u.rating); setStat("#cf-max", u.maxRating);
+    cf.current = u.rating; cf.max = u.maxRating;
+  }).catch(() => {});
+  fetch("https://codeforces.com/api/user.rating?handle=Utsav-X-bit", API).then(r => r.json()).then(j => {
+    const list = j.result || []; if (list.length < 2) return;
+    setStat("#cf-n", list.length); cf.contests = list.length;
+    cf.history = list.map(r => ({ n: r.contestName, rank: r.rank, rating: r.newRating, t: dayKey(r.ratingUpdateTimeSeconds * 1000) }));
+    renderChart();
+  }).catch(() => {});
+  fetch("https://codeforces.com/api/user.status?handle=Utsav-X-bit&from=1&count=100000", API).then(r => r.json()).then(j => {
+    const byDay = new Map(), c = windowCut();
+    for (const s of j.result || []) {
+      const d = dayKey(s.creationTimeSeconds * 1000); if (d < c) continue;
+      byDay.set(d, (byDay.get(d) || 0) + 1);
+    }
+    redrawHeat("cf-heatmap", [...byDay], "c", "submission", "#cf-total", "#cf-days");
+  }).catch(() => {});
+
+  // GitHub — repo/follower stats + contribution heatmap
+  fetch("https://api.github.com/users/Utsav-X-bit", API).then(r => r.json()).then(j => {
+    setStat("#gh-repos", j.public_repos); setStat("#gh-fol", j.followers);
+  }).catch(() => {});
+  fetch("https://github-contributions-api.jogruber.de/v4/Utsav-X-bit", API).then(r => r.json()).then(j => {
+    const c = windowCut();
+    const pairs = (j.contributions || []).filter(x => x.count > 0 && x.date >= c).map(x => [x.date, x.count]);
+    redrawHeat("gh-heatmap", pairs, "hl", "contribution", "#gh-total", "#gh-days");
+  }).catch(() => {});
+
+  // Codolio — questions solved across linked platforms
+  fetch("https://api.codolio.com/profile?userKey=Utsav-X-bit", API).then(r => r.json()).then(j => {
+    const pl = (((j.data || {}).platformProfiles || {}).platformProfiles) || [];
+    const rows = pl.filter(p => p.totalQuestionStats && p.totalQuestionStats.totalQuestionCounts > 0)
+      .map(p => [p.platform, p.totalQuestionStats.totalQuestionCounts]);
+    if (rows.length) renderCodolio(rows.reduce((a, r) => a + r[1], 0), rows);
+  }).catch(() => {});
 })();
 
 /* ═══════════ WOW LAYER ═══════════ */
