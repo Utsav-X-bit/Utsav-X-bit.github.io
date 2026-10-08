@@ -7,6 +7,7 @@
 
   /* ── footer year ── */
   $("#year").textContent = new Date().getFullYear();
+  $("#proj-count").textContent = DATA.projects.length;
 
   /* ═══ BOOT LOADER ═══ */
   const loader = $("#loader"), log = $("#loader-log"), fill = $("#loader-fill");
@@ -94,8 +95,8 @@
   /* ═══ TYPED ROLES (hero) ═══ */
   const roles = [
     "llm inference engineer",
-    "cybersecurity researcher",
-    "cryptography engineer",
+    "cybersecurity enthusiast",
+    "cryptography tinkerer",
     "game developer",
     "competitive programmer"
   ];
@@ -221,7 +222,7 @@
     svg.appendChild(band);
     const bandLbl = document.createElementNS(NS, "text");
     bandLbl.setAttribute("x", pad.l + 6); bandLbl.setAttribute("y", Y(1200) - 6);
-    bandLbl.setAttribute("fill", "#5B6B84"); bandLbl.setAttribute("font-size", "10");
+    bandLbl.setAttribute("fill", "#8695AD"); bandLbl.setAttribute("font-size", "10");
     bandLbl.textContent = "newbie band";
     svg.appendChild(bandLbl);
 
@@ -234,14 +235,14 @@
       svg.appendChild(ln);
       const t = document.createElementNS(NS, "text");
       t.setAttribute("x", pad.l - 8); t.setAttribute("y", Y(v) + 4);
-      t.setAttribute("fill", "#5B6B84"); t.setAttribute("font-size", "10"); t.setAttribute("text-anchor", "end");
+      t.setAttribute("fill", "#8695AD"); t.setAttribute("font-size", "10"); t.setAttribute("text-anchor", "end");
       t.textContent = v; svg.appendChild(t);
     }
     // x labels (first / mid / last date)
     [0, Math.floor(pts.length / 2), pts.length - 1].forEach(i => {
       const t = document.createElementNS(NS, "text");
       t.setAttribute("x", X(i)); t.setAttribute("y", h - 8);
-      t.setAttribute("fill", "#5B6B84"); t.setAttribute("font-size", "10"); t.setAttribute("text-anchor", "middle");
+      t.setAttribute("fill", "#8695AD"); t.setAttribute("font-size", "10"); t.setAttribute("text-anchor", "middle");
       t.textContent = pts[i].t.slice(0, 7); svg.appendChild(t);
     });
 
@@ -337,7 +338,14 @@
     const end = new Date(); end.setHours(0, 0, 0, 0);
     const start = new Date(end); start.setDate(start.getDate() - (53 * 7 - 1));
     start.setDate(start.getDate() - start.getDay());
-    const cell = 11, gap = 3, top = 20, left = 8;
+    // ponytail: cell size picked once at load (fits a full year to the card width; no re-render on rotate/resize)
+    const top = 20, left = 8;
+    const avail = Math.max(280, (el.parentElement.clientWidth || 525) - 48); // .heatmap-scroll side padding
+    const pitch = Math.min(14, Math.max(5, Math.floor((avail - left * 2) / 54)));
+    const gap = pitch >= 7 ? 2 : 1;
+    const cell = pitch - gap;
+    const rx = Math.min(2.5, cell * 0.25);
+    const dense = pitch < 7; // crowded months: label every other one
     const weeks = [];
     for (let w = new Date(start); w <= end; w.setDate(w.getDate() + 7)) weeks.push(new Date(w));
     const W = left * 2 + weeks.length * (cell + gap), H = top + 7 * (cell + gap) + 6;
@@ -345,14 +353,14 @@
     svg.setAttribute("width", W); svg.setAttribute("height", H);
     svg.setAttribute("viewBox", "0 0 " + W + " " + H);
     const iso = dt => dt.getFullYear() + "-" + String(dt.getMonth() + 1).padStart(2, "0") + "-" + String(dt.getDate()).padStart(2, "0");
-    let lastMonth = -1;
+    let lastMonth = -1, labelN = 0;
     weeks.forEach((w, wi) => {
       if (w.getMonth() !== lastMonth) {
         lastMonth = w.getMonth();
-        if (wi > 0) {
+        if (wi > 0 && (!dense || labelN++ % 2 === 0)) {
           const t = document.createElementNS(NS2, "text");
           t.setAttribute("x", left + wi * (cell + gap)); t.setAttribute("y", 13);
-          t.setAttribute("fill", "#64748b"); t.setAttribute("font-size", "10");
+          t.setAttribute("fill", "#8695AD"); t.setAttribute("font-size", "10");
           t.textContent = w.toLocaleString("en", { month: "short" });
           svg.appendChild(t);
         }
@@ -363,7 +371,7 @@
         const key = iso(dt), c = counts[key] || 0;
         const r = document.createElementNS(NS2, "rect");
         r.setAttribute("x", left + wi * (cell + gap)); r.setAttribute("y", top + d * (cell + gap));
-        r.setAttribute("width", cell); r.setAttribute("height", cell); r.setAttribute("rx", 2.5);
+        r.setAttribute("width", cell); r.setAttribute("height", cell); r.setAttribute("rx", rx);
         r.setAttribute("class", prefix + lvl(c));
         const tt = document.createElementNS(NS2, "title");
         tt.textContent = c + " " + noun + (c === 1 ? "" : "s") + " on " + key;
@@ -478,7 +486,7 @@
       if (n.sub) {
         let sub = String(n.sub);
         if (sub.length > 27) sub = sub.slice(0, 26) + "…";
-        s += '<text x="' + P.cx + '" y="' + (P.y + NH - 12) + '" text-anchor="middle" fill="#64748b" font-size="10" font-family="monospace">' + esc(sub) + "</text>";
+        s += '<text x="' + P.cx + '" y="' + (P.y + NH - 12) + '" text-anchor="middle" fill="#8695AD" font-size="10" font-family="monospace">' + esc(sub) + "</text>";
       }
     });
     // legend
@@ -486,7 +494,7 @@
     used.forEach(k => {
       const wpx = KIND_N[k].length * 6.4 + 26;
       s += '<circle cx="' + (lx + 8) + '" cy="' + (H - 16) + '" r="5" fill="' + KIND_C[k] + '"/>';
-      s += '<text x="' + (lx + 19) + '" y="' + (H - 12) + '" fill="#64748b" font-size="10.5" font-family="monospace">' + KIND_N[k] + "</text>";
+      s += '<text x="' + (lx + 19) + '" y="' + (H - 12) + '" fill="#8695AD" font-size="10.5" font-family="monospace">' + KIND_N[k] + "</text>";
       lx += wpx;
     });
     return s + "</svg>";
@@ -516,7 +524,7 @@
       const ex = padX + 12, ey = topY + nH;
       s += '<path d="M' + sx + "," + sy + " C" + (sx + 44) + "," + (sy + 62) + " " + (ex + 44) + "," + (ey + 62) + " " + (ex + 10) + "," + ey + '" fill="none" stroke="#22C55E" stroke-width="1.4" stroke-dasharray="6 5"/>';
       s += triL(ex + 10, ey);
-      s += '<text x="' + (W / 2) + '" y="' + (H - 6) + '" text-anchor="middle" fill="#64748b" font-size="11" font-family="monospace">self-improving loop</text>';
+      s += '<text x="' + (W / 2) + '" y="' + (H - 6) + '" text-anchor="middle" fill="#8695AD" font-size="11" font-family="monospace">self-improving loop</text>';
     }
     return s + "</svg>";
   }
@@ -536,11 +544,13 @@
     lastFocus = document.activeElement;
     modal.hidden = false;
     document.body.classList.add("pm-open");
+    ["a.skip-link", "header", "main", "footer"].forEach(el => $(el).setAttribute("inert", ""));
     $("#pm-close").focus();
   }
   function closeModal() {
     modal.hidden = true;
     document.body.classList.remove("pm-open");
+    ["a.skip-link", "header", "main", "footer"].forEach(el => $(el).removeAttribute("inert"));
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
   $("#pm-close").addEventListener("click", closeModal);

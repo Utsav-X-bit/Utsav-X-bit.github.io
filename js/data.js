@@ -3,7 +3,7 @@ const DATA = {
   profile: {
     name: "Utsav Gupta",
     handle: "Utsav-X-bit",
-    tagline: "Cybersecurity researcher · Cryptography · Game dev",
+    tagline: "Cybersecurity enthusiast · Cryptography · Game dev",
     email: "utsavgupta5467@gmail.com",
     phone: "+91-8076043638",
     location: "New Delhi, India",
@@ -22,7 +22,7 @@ const DATA = {
       language: "Python",
       updated: "Sep 2026",
       featured: true,
-      tag: "LLM security research",
+      tag: "LLM red-teaming",
       desc: "Automated red-teaming framework for LLMs. A planner model picks attack strategies, a generator writes concise attack prompts, and a deterministic 4-signal ladder verifies extracted secrets with no LLM judge. Ships with CLI, FastAPI/React dashboard, FAISS-backed self-improving memory, and support for vLLM, Ollama, HuggingFace and cloud APIs — tuned with HPC practices for evaluation runs.",
       details: {
         features: ["Planner LLM selects attack strategies per target", "Generator writes concise attack prompts", "Deterministic 4-signal ladder verifies extracted secrets - no LLM judge", "CLI plus FastAPI/React dashboard", "FAISS-backed self-improving memory loop", "Backends: vLLM, Ollama, HuggingFace and cloud APIs", "Evaluation runs tuned with HPC practices on DGX A100 hardware"],
