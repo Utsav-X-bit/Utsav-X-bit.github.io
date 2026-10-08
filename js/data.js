@@ -231,23 +231,10 @@ const DATA = {
     kernel: "5.15.0-1062-nvidia"
   },
 
+  /* GitHub dev-card snapshot (all-time jogruber sums + GH REST); live API overwrites on load */
   github: {
-    repos: 29,
-    followers: 10,
-    following: 8,
-    /* share of public repos by primary language (computed from repo list) */
-    languages: [
-      { name: "Python", pct: 41, color: "#3572A5" },
-      { name: "TypeScript", pct: 9, color: "#3178c6" },
-      { name: "C", pct: 9, color: "#555555" },
-      { name: "C++", pct: 9, color: "#f34b7d" },
-      { name: "HTML", pct: 9, color: "#e34c26" },
-      { name: "Jupyter Notebook", pct: 5, color: "#DA5B0B" },
-      { name: "Java", pct: 5, color: "#b07219" },
-      { name: "Shell", pct: 5, color: "#89e051" },
-      { name: "CSS", pct: 5, color: "#563d7c" },
-      { name: "JavaScript", pct: 5, color: "#f1e05a" }
-    ]
+    repos: 35, contributions: 588, days: 120,
+    langs: ["Python", "JavaScript", "TypeScript", "Jupyter", "HTML", "CSS"],
   },
 
   /* certificate titles/issuers verified by reading each document */

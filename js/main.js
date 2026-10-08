@@ -307,21 +307,6 @@
   addEventListener("portfolio:theme", renderChart);
   let rsz; window.addEventListener("resize", () => { clearTimeout(rsz); rsz = setTimeout(renderChart, 200); });
 
-  /* ═══ GITHUB LANG BARS ═══ */
-  $("#gh-repos").textContent = DATA.github.repos;
-  $("#gh-fol").textContent = DATA.github.followers;
-  const lb = $("#langbars");
-  DATA.github.languages.forEach(l => {
-    const row = document.createElement("div");
-    row.className = "langbar";
-    row.innerHTML = "<span>" + l.name + "</span><span class='bar'><span class='fill' data-w='" + l.pct + "' style='background:" + l.color + "'></span></span><span class='pct'>" + l.pct + "%</span>";
-    lb.appendChild(row);
-  });
-  const fillObs = new IntersectionObserver((es) => {
-    es.forEach(e => { if (e.isIntersecting) { $$(".fill", lb).forEach(f => f.style.width = f.dataset.w + "%"); fillObs.disconnect(); } });
-  }, { threshold: 0.3 });
-  fillObs.observe(lb);
-
   /* ═══ MOBILE NAV ═══ */
   const toggle = $("#nav-toggle"), links = $("#nav-links");
   toggle.addEventListener("click", () => {
@@ -611,6 +596,31 @@
   }
   renderCodolio(DATA.codolio); // paints instantly, live refresh follows
 
+  // development pane — static snapshot paints instantly, live GitHub refresh follows
+  const ghdev = {
+    repos: DATA.github.repos, contrib: DATA.github.contributions,
+    days: DATA.github.days, langs: DATA.github.langs.slice(),
+  };
+  function renderDev() {
+    if (ghdev.contrib != null) $("#dev-contrib").textContent = ghdev.contrib;
+    if (ghdev.days != null) $("#dev-days").textContent = ghdev.days;
+    if (ghdev.repos != null) $("#dev-repos").textContent = ghdev.repos;
+    if (ghdev.langs) $("#dev-chips").innerHTML = ghdev.langs.map(l => "<span>#" + esc(String(l).toUpperCase()) + "</span>").join("");
+  }
+  renderDev();
+  // card tabs — sliding indicator + pane cross-fade
+  const tabsEl = $("#cod-tabs");
+  $$(".cdtab").forEach(b => b.addEventListener("click", () => {
+    if (b.classList.contains("active")) return;
+    $$(".cdtab").forEach(x => { x.classList.toggle("active", x === b); x.setAttribute("aria-selected", String(x === b)); });
+    tabsEl.classList.toggle("dev", b.dataset.tab === "dev");
+    $$(".codpane").forEach(p => {
+      const on = p.dataset.pane === b.dataset.tab;
+      if (on) { p.hidden = false; requestAnimationFrame(() => p.classList.add("in")); }
+      else { p.classList.remove("in"); setTimeout(() => { if (!p.classList.contains("in")) p.hidden = true; }, 320); }
+    });
+  }));
+
   // Codeforces — rating stats, contest count, rating chart, submission heatmap
   fetch("https://codeforces.com/api/user.info?handles=Utsav-X-bit", API).then(r => r.json()).then(j => {
     const u = (j.result || [])[0]; if (!u) return;
@@ -632,11 +642,21 @@
     redrawHeat("cf-heatmap", [...byDay], "c", "submission", "#cf-total", "#cf-days");
   }).catch(() => {});
 
-  // GitHub — repo/follower stats + contribution heatmap
+  // GitHub — dev card (contributions, active days, public repos, language chips) + contribution heatmap
   fetch("https://api.github.com/users/Utsav-X-bit", API).then(r => r.json()).then(j => {
-    setStat("#gh-repos", j.public_repos); setStat("#gh-fol", j.followers);
+    ghdev.repos = j.public_repos; renderDev();
+  }).catch(() => {});
+  fetch("https://api.github.com/users/Utsav-X-bit/repos?per_page=100", API).then(r => r.json()).then(j => {
+    if (!Array.isArray(j)) return;
+    const by = {};
+    for (const r of j) if (r.language) by[r.language] = (by[r.language] || 0) + 1;
+    ghdev.langs = Object.entries(by).sort((a, b) => b[1] - a[1]).slice(0, 6).map(x => x[0].replace(" Notebook", ""));
+    renderDev();
   }).catch(() => {});
   fetch("https://github-contributions-api.jogruber.de/v4/Utsav-X-bit", API).then(r => r.json()).then(j => {
+    ghdev.contrib = Object.values(j.total || {}).reduce((a, b) => a + b, 0);
+    ghdev.days = (j.contributions || []).filter(x => x.count > 0).length;
+    renderDev();
     const c = windowCut();
     const pairs = (j.contributions || []).filter(x => x.count > 0 && x.date >= c).map(x => [x.date, x.count]);
     redrawHeat("gh-heatmap", pairs, "hl", "contribution", "#gh-total", "#gh-days");
@@ -780,8 +800,7 @@
       statObs.unobserve(el);
     });
   }, { threshold: 0.5 });
-  [["#cf-cur", DATA.cf.current], ["#cf-max", DATA.cf.max], ["#cf-n", DATA.cf.contests],
-   ["#gh-repos", DATA.github.repos], ["#gh-fol", DATA.github.followers]].forEach(([sel, v]) => {
+  [["#cf-cur", DATA.cf.current], ["#cf-max", DATA.cf.max], ["#cf-n", DATA.cf.contests]].forEach(([sel, v]) => {
     const el = $(sel); el.dataset.count = v; el.textContent = "0"; statObs.observe(el);
   });
 

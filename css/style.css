@@ -60,7 +60,7 @@ h1, h2, h3 { text-wrap: balance; }
 a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 
 /* tabular numbers for stats */
-.cf-num, .gh-num { font-variant-numeric: tabular-nums; }
+.cf-num, .cs-num { font-variant-numeric: tabular-nums; }
 
 /* ── eyebrows & titles ── */
 .eyebrow { color: var(--accent); font-size: 13px; letter-spacing: .08em; margin-bottom: 10px; }
@@ -207,10 +207,10 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 
 /* ══════════ ARENA ══════════ */
 .arena-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 18px; align-items: stretch; }
-.cf-stats, .gh-stats { display: flex; gap: 26px; padding: 20px 24px 6px; }
-.cf-stat, .gh-stat { display: flex; flex-direction: column; }
-.cf-num, .gh-num { font-size: 30px; font-weight: 800; color: var(--accent); }
-.cf-lbl, .gh-lbl { font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: .1em; }
+.cf-stats { display: flex; gap: 26px; padding: 20px 24px 6px; }
+.cf-stat { display: flex; flex-direction: column; }
+.cf-num { font-size: 30px; font-weight: 800; color: var(--accent); }
+.cf-lbl { font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: .1em; }
 .chart-wrap { position: relative; padding: 8px 12px 18px; }
 #cf-chart { width: 100%; height: 260px; display: block; }
 .cf-tip {
@@ -219,12 +219,6 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   transform: translate(-50%, -115%); z-index: 5; box-shadow: 0 10px 30px rgba(0,0,0,.5);
 }
 .cf-tip .dim { display: block; color: var(--dim); font-size: 11px; }
-.gh-lbl2 { font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: .1em; padding: 14px 24px 8px; }
-.langbars { padding: 0 24px 24px; display: flex; flex-direction: column; gap: 10px; }
-.langbar { display: grid; grid-template-columns: 92px 1fr 38px; gap: 10px; align-items: center; font-size: 12px; color: var(--muted); }
-.langbar .bar { height: 7px; background: rgba(148,163,184,.12); border-radius: 4px; overflow: hidden; }
-.langbar .fill { display: block; height: 100%; border-radius: 4px; width: 0; transition: width 1.1s cubic-bezier(.2,.7,.2,1); }
-.langbar .pct { text-align: right; color: var(--dim); }
 
 /* ══════════ TIMELINE ══════════ */
 .timeline { position: relative; margin-top: 10px; padding-left: 8px; }
@@ -384,9 +378,17 @@ footer { border-top: 1px solid var(--border); padding: 26px 0; font-size: 12.5px
 }
 .toast.on { opacity: 1; transform: translate(-50%, 0); }
 
-/* ── Codolio profile card: codolio.com's card layout, themed to this site, live via their API ── */
-.codcard { grid-column: 1 / -1; width: 100%; max-width: 360px; margin: 0 auto; padding: 18px 22px 22px; text-align: center; }
-.codcard-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+/* ── Codolio profile card: codolio.com's dual-pane card, themed to this site, live via their API ── */
+.codcard { padding: 18px 22px 22px; text-align: center; }
+.codcard-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.codcard-tabs { position: relative; display: flex; background: var(--panel-2); border: 1px solid var(--border); border-radius: 999px; padding: 3px; margin-bottom: 14px; }
+.codcard-tabs::after { content: ""; position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); background: var(--accent); border-radius: 999px; transition: transform .28s cubic-bezier(.4, 0, .2, 1); }
+.codcard-tabs.dev::after { transform: translateX(100%); }
+.cdtab { flex: 1; position: relative; z-index: 1; padding: 6px 8px; background: none; border: 0; font: inherit; font-size: 12px; color: var(--muted); cursor: pointer; border-radius: 999px; transition: color .28s; }
+.cdtab.active { color: var(--on-accent); font-weight: 700; }
+.cdtab:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.codpane { opacity: 0; transform: translateY(10px); transition: opacity .28s ease, transform .28s ease; }
+.codpane.in { opacity: 1; transform: none; }
 .codcard-brand { font-size: 15px; font-weight: 800; letter-spacing: -.02em; color: var(--text); text-decoration: none; }
 .codcard-brand:hover { opacity: .75; }
 .codcard-brand span { color: var(--accent); }
@@ -397,6 +399,9 @@ footer { border-top: 1px solid var(--border); padding: 26px 0; font-size: 12.5px
 .codcard-check { width: 16px; height: 16px; color: var(--accent); flex: none; }
 .codcard-handle { display: inline-block; margin-top: 9px; background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(34, 197, 94, .25); border-radius: 999px; padding: 4px 15px; font-size: 13px; font-weight: 600; }
 .codcard-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.codcard-stats.s3 { grid-template-columns: repeat(3, 1fr); }
+.s3 .cs-lbl { font-size: 11.5px; }
+.s3 .cs-num { font-size: 25px; }
 .codcard-stat { border: 1px solid var(--border); border-radius: 10px; background: var(--panel-2); padding: 9px 8px 11px; }
 .cs-lbl { display: block; margin-bottom: 3px; font-size: 12.5px; font-weight: 600; }
 .sq .cs-lbl { color: #fbbf24; }
@@ -405,6 +410,8 @@ footer { border-top: 1px solid var(--border); padding: 26px 0; font-size: 12.5px
 .codcard-find { margin-top: 16px; font-size: 13px; color: var(--muted); }
 .codcard-icons { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
 .codcard-icons img { width: 34px; height: 34px; padding: 5px; box-sizing: border-box; background: #fff; border-radius: 50%; object-fit: contain; }
+.ghbadge { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; background: #fff; border-radius: 50%; color: #141D33; line-height: 0; }
+.ghbadge svg { width: 18px; height: 18px; }
 .codcard-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 14px; }
 .codcard-chips span { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(34, 197, 94, .25); border-radius: 999px; padding: 4px 12px; font-size: 12px; font-weight: 600; }
 
