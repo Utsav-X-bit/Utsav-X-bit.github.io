@@ -584,15 +584,14 @@
   function renderCodolio(c) {
     const t = $("#cod-total"); if (t && c.total != null) t.textContent = c.total;
     const d = $("#cod-days"); if (d && typeof c.days === "number") d.textContent = c.days;
-    const n = $("#cod-name"); if (n && c.name) n.textContent = c.name;
-    const h = $("#cod-handle"); if (h && c.handle) h.textContent = c.handle;
+    if (c.name) $$(".cod-nm").forEach(e => e.textContent = c.name);     // identity is duplicated on both flip faces
+    if (c.handle) $$(".cod-hd").forEach(e => e.textContent = c.handle);
     const ic = $("#cod-icons");
     if (ic) ic.innerHTML = (c.plats || []).filter(p => COD_ICON[p])
-      .map(p => '<img src="https://codolio.com/icons/' + COD_ICON[p] + '.png" alt="' + esc(p) + '" loading="lazy" onerror="this.remove()">').join("");
+      .map(p => '<img src="https://codfolio.com/icons/' + COD_ICON[p] + '.png" alt="' + esc(p) + '" loading="lazy" onerror="this.remove()">').join("");
     const ch = $("#cod-chips");
     if (ch) ch.innerHTML = (c.chips || []).map(x => "<span>#" + esc(x) + "</span>").join("");
-    const av = $("#cod-av");
-    if (av && c.avatar) av.innerHTML = '<img class="codcard-av" src="' + c.avatar + '" alt="" onerror="this.remove()">';
+    if (c.avatar) $$(".cod-avslot").forEach(av => { av.innerHTML = '<img class="codcard-av" src="' + c.avatar + '" alt="" onerror="this.remove()">'; });
   }
   renderCodolio(DATA.codolio); // paints instantly, live refresh follows
 
@@ -608,17 +607,14 @@
     if (ghdev.langs) $("#dev-chips").innerHTML = ghdev.langs.map(l => "<span>#" + esc(String(l).toUpperCase()) + "</span>").join("");
   }
   renderDev();
-  // card tabs — sliding indicator + pane cross-fade
-  const tabsEl = $("#cod-tabs");
+  // card tabs — codfolio's flat 1s Y-flip between the two faces
+  const flipper = $("#cod-flipper");
   $$(".cdtab").forEach(b => b.addEventListener("click", () => {
     if (b.classList.contains("active")) return;
+    const dev = b.dataset.tab === "dev";
     $$(".cdtab").forEach(x => { x.classList.toggle("active", x === b); x.setAttribute("aria-selected", String(x === b)); });
-    tabsEl.classList.toggle("dev", b.dataset.tab === "dev");
-    $$(".codpane").forEach(p => {
-      const on = p.dataset.pane === b.dataset.tab;
-      if (on) { p.hidden = false; requestAnimationFrame(() => p.classList.add("in")); }
-      else { p.classList.remove("in"); setTimeout(() => { if (!p.classList.contains("in")) p.hidden = true; }, 320); }
-    });
+    flipper.classList.toggle("dev", dev);
+    $$(".codcard-face").forEach(f => { f.inert = f.classList.contains("back") ? !dev : dev; }); // only the shown face is focusable/AT-readable
   }));
 
   // Codeforces — rating stats, contest count, rating chart, submission heatmap

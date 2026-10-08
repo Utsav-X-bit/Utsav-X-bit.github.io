@@ -381,14 +381,20 @@ footer { border-top: 1px solid var(--border); padding: 26px 0; font-size: 12.5px
 /* ── Codolio profile card: codolio.com's dual-pane card, themed to this site, live via their API ── */
 .codcard { padding: 18px 22px 22px; text-align: center; }
 .codcard-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-.codcard-tabs { position: relative; display: flex; background: var(--panel-2); border: 1px solid var(--border); border-radius: 999px; padding: 3px; margin-bottom: 14px; }
-.codcard-tabs::after { content: ""; position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); background: var(--accent); border-radius: 999px; transition: transform .28s cubic-bezier(.4, 0, .2, 1); }
-.codcard-tabs.dev::after { transform: translateX(100%); }
-.cdtab { flex: 1; position: relative; z-index: 1; padding: 6px 8px; background: none; border: 0; font: inherit; font-size: 12px; color: var(--muted); cursor: pointer; border-radius: 999px; transition: color .28s; }
-.cdtab.active { color: var(--on-accent); font-weight: 700; }
-.cdtab:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-.codpane { opacity: 0; transform: translateY(10px); transition: opacity .28s ease, transform .28s ease; }
-.codpane.in { opacity: 1; transform: none; }
+.codcard-tabs { display: flex; align-items: center; background: var(--panel-2); border: 1px solid var(--border); border-radius: 999px; padding: 4px; margin-bottom: 14px; box-shadow: 0 4px 14px rgba(0, 0, 0, .18); }
+.cdtab { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: none; border: 0; font: inherit; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; transition: all .3s; }
+.cdtab:first-of-type { border-radius: 999px 0 0 999px; }
+.cdtab:last-of-type { border-radius: 0 999px 999px 0; }
+.cdtab.active { background: var(--accent); color: var(--on-accent); font-weight: 600; box-shadow: 0 2px 8px var(--accent-glow); }
+.cdtab:not(.active):hover { background: var(--panel); color: var(--text); }
+.cdtab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.cdtab svg { width: 18px; height: 18px; flex: none; }
+/* flat 3D flip: codfolio's react-card-flip — 1s ease, backface-hidden faces, no perspective */
+.codcard-flip { perspective: none; }
+.codcard-flipper { display: grid; transform-style: preserve-3d; transition: transform 1s; }
+.codcard-flipper.dev { transform: rotateY(180deg); }
+.codcard-face { grid-area: 1 / 1; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.codcard-face.back { transform: rotateY(180deg); }
 .codcard-brand { font-size: 15px; font-weight: 800; letter-spacing: -.02em; color: var(--text); text-decoration: none; }
 .codcard-brand:hover { opacity: .75; }
 .codcard-brand span { color: var(--accent); }
