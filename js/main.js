@@ -5,6 +5,10 @@
   const $ = (s, c) => (c || document).querySelector(s);
   const $$ = (s, c) => Array.from((c || document).querySelectorAll(s));
 
+  /* accent helpers — phosphor themes recolor canvas/SVG chrome */
+  const accentCss = () => getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#22C55E";
+  const accentRgb = () => { const m = accentCss().match(/\w\w/g); return m ? m.slice(0, 3).map(x => parseInt(x, 16)).join(",") : "34,197,94"; };
+
   /* ── footer year ── */
   $("#year").textContent = new Date().getFullYear();
   $("#proj-count").textContent = DATA.projects.length;
@@ -143,14 +147,15 @@
       drops = Array.from({ length: cols }, () => Math.random() * -40);
     }
     size(); window.addEventListener("resize", size);
-    let last = 0;
+    let last = 0, ACC_RGB = accentRgb();
+    addEventListener("portfolio:theme", () => { ACC_RGB = accentRgb(); });
     (function draw(t) {
       requestAnimationFrame(draw);
       if (t - last < 90) return; last = t;
       ctx.fillStyle = "rgba(15,23,42,0.14)";
       ctx.fillRect(0, 0, W, H);
       ctx.font = "15px 'JetBrains Mono', monospace";
-      ctx.fillStyle = "rgba(34,197,94,0.5)";
+      ctx.fillStyle = "rgba(" + ACC_RGB + ",0.5)";
       for (let i = 0; i < cols; i++) {
         const ch = HEX[Math.floor(Math.random() * HEX.length)] + HEX[Math.floor(Math.random() * HEX.length)];
         ctx.fillText(ch, i * 22, drops[i] * 22);
@@ -205,6 +210,7 @@
   const NS = "http://www.w3.org/2000/svg";
   function renderChart() {
     const w = svg.clientWidth || 600, h = 260, pad = { l: 44, r: 14, t: 16, b: 30 };
+    const acc = accentCss();
     svg.setAttribute("viewBox", "0 0 " + w + " " + h);
     svg.innerHTML = "";
     const pts = cf.history;
@@ -250,8 +256,8 @@
     const line = pts.map((p, i) => (i ? "L" : "M") + X(i).toFixed(1) + "," + Y(p.rating).toFixed(1)).join(" ");
     const defs = document.createElementNS(NS, "defs");
     defs.innerHTML = '<linearGradient id="cfgrad" x1="0" y1="0" x2="0" y2="1">' +
-      '<stop offset="0" stop-color="#22C55E" stop-opacity="0.35"/>' +
-      '<stop offset="1" stop-color="#22C55E" stop-opacity="0"/></linearGradient>';
+      '<stop offset="0" stop-color="' + acc + '" stop-opacity="0.35"/>' +
+      '<stop offset="1" stop-color="' + acc + '" stop-opacity="0"/></linearGradient>';
     svg.appendChild(defs);
     const area = document.createElementNS(NS, "path");
     area.setAttribute("d", line + " L" + X(pts.length - 1).toFixed(1) + "," + (h - pad.b) + " L" + X(0).toFixed(1) + "," + (h - pad.b) + " Z");
@@ -259,7 +265,7 @@
     svg.appendChild(area);
     const path = document.createElementNS(NS, "path");
     path.setAttribute("d", line); path.setAttribute("fill", "none");
-    path.setAttribute("stroke", "#22C55E"); path.setAttribute("stroke-width", "2.5");
+    path.setAttribute("stroke", acc); path.setAttribute("stroke-width", "2.5");
     path.setAttribute("stroke-linejoin", "round"); path.setAttribute("stroke-linecap", "round");
     svg.appendChild(path);
 
@@ -277,7 +283,7 @@
       c.setAttribute("fill", "transparent"); c.style.cursor = "crosshair";
       c.addEventListener("mouseenter", () => {
         tip.hidden = false;
-        tip.innerHTML = "<strong style='color:#22C55E'>" + p.rating + "</strong> · rank " + p.rank.toLocaleString() +
+        tip.innerHTML = "<strong style='color:" + acc + "'>" + p.rating + "</strong> · rank " + p.rank.toLocaleString() +
           "<span class='dim'>" + p.n + " — " + p.t + "</span>";
         const wrap = svg.parentElement.getBoundingClientRect();
         tip.style.left = (X(i) / w * 100) + "%";
@@ -287,7 +293,7 @@
       // touch support
       c.addEventListener("click", () => {
         tip.hidden = false;
-        tip.innerHTML = "<strong style='color:#22C55E'>" + p.rating + "</strong> · rank " + p.rank.toLocaleString() +
+        tip.innerHTML = "<strong style='color:" + acc + "'>" + p.rating + "</strong> · rank " + p.rank.toLocaleString() +
           "<span class='dim'>" + p.n + " — " + p.t + "</span>";
         const wrap = svg.parentElement.getBoundingClientRect();
         tip.style.left = (X(i) / w * 100) + "%";
@@ -298,6 +304,7 @@
     });
   }
   renderChart();
+  addEventListener("portfolio:theme", renderChart);
   let rsz; window.addEventListener("resize", () => { clearTimeout(rsz); rsz = setTimeout(renderChart, 200); });
 
   /* ═══ GITHUB LANG BARS ═══ */
@@ -558,7 +565,7 @@
   document.addEventListener("keydown", e => { if (e.key === "Escape" && !modal.hidden) closeModal(); });
 
   /* ═══ ACTIVE NAV LINK ═══ */
-  const secIds = ["about", "projects", "arena", "journey", "certs", "contact"];
+  const secIds = ["about", "projects", "arena", "journey", "certs", "shell", "contact"];
   const navAs = $$("#nav-links a");
   const secObs = new IntersectionObserver((es) => {
     es.forEach(e => {
@@ -723,8 +730,9 @@
     keys = (keys + e.key.toLowerCase()).slice(-4);
     if (keys === "hack") { keys = ""; triggerBreach(); }
   });
+  addEventListener("portfolio:hack", triggerBreach);
   // hint in console for the curious
-  console.log("%cpsst — type 'hack' anywhere on this page. you didn't hear it from me.", "color:#22C55E;font-family:monospace");
+  console.log("%cpsst — type 'hack' anywhere on this page. ↑↑↓↓←→←→BA works too. you didn't hear it from me.", "color:#22C55E;font-family:monospace");
 })();
 
 /* ═══════════ DOWNLOADS & DOC FALLBACKS ═══════════ */
@@ -771,5 +779,162 @@
       if (r.ok) window.open(url, "_blank", "noopener");
       else toast("document syncing — this certificate file is being uploaded, check back soon.");
     }).catch(() => window.open(url, "_blank", "noopener"));
+  });
+})();
+
+/* ═══════════ INTERACTIVE SHELL · CLOCK · PHOSPHOR · KONAMI ═══════════ */
+(function () {
+  "use strict";
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s).replace(/[&<>"']/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+
+  /* ── live clock (IST) ── */
+  const clockEl = $("#clock");
+  const tick = () => {
+    try { clockEl.textContent = new Date().toLocaleTimeString("en-GB", { timeZone: "Asia/Kolkata", hour12: false }); } catch (e) {}
+  };
+  if (clockEl) { tick(); setInterval(tick, 1000); }
+
+  /* ── phosphor themes ── */
+  const THEMES = ["green", "amber", "ice"];
+  let theme = "green";
+  try { theme = localStorage.getItem("portfolio-theme") || "green"; } catch (e) {}
+  if (!THEMES.includes(theme)) theme = "green";
+  function setTheme(name) {
+    theme = name;
+    if (name === "green") delete document.documentElement.dataset.theme;
+    else document.documentElement.dataset.theme = name;
+    try { localStorage.setItem("portfolio-theme", name); } catch (e) {}
+    dispatchEvent(new CustomEvent("portfolio:theme"));
+  }
+
+  /* ── the shell ── */
+  const out = $("#cli-out"), form = $("#cli-form"), input = $("#cli-in");
+  if (!out || !form || !input) return;
+
+  const hist = []; let hIdx = 0, rooted = false;
+  const PROMPT = '<span class="prompt">utsav@x</span><span class="dim">:</span><span class="path">~/portfolio</span><span class="dim">$</span>';
+  function print(html, cls) {
+    const d = document.createElement("div");
+    d.className = "cli-line" + (cls ? " " + cls : "");
+    d.innerHTML = html;
+    out.appendChild(d);
+    out.scrollTop = out.scrollHeight;
+  }
+
+  const projects = (typeof DATA !== "undefined" && DATA.projects) || [];
+
+  const cmds = {
+    help() {
+      print([
+        "available commands:",
+        "  ls                list featured projects",
+        "  open &lt;n|name&gt;     open a project deep-dive",
+        "  whoami            who is utsav",
+        "  theme &lt;name&gt;      phosphor: green · amber · ice",
+        "  resume            download the résumé",
+        "  contact           jump to contact",
+        "  date              current time (IST)",
+        "  hack              you'll see",
+        "  sudo              requires elevation…",
+        "  clear             clear the screen"
+      ].join("\n"), "dim-line");
+    },
+    ls() {
+      projects.forEach((p, i) =>
+        print(String(i + 1).padStart(2, " ") + "  <span class=\"cli-ok\">" + esc(p.name) + "</span>  <span class=\"dim\">" + esc(p.tag) + "</span>"));
+      print(projects.length + " projects — `open &lt;n&gt;` to dive in", "dim-line");
+    },
+    open(arg) {
+      if (!arg) return print("usage: open &lt;n|name&gt;", "cli-err");
+      let i = parseInt(arg, 10) - 1;
+      if (isNaN(i) || i < 0 || i >= projects.length) i = projects.findIndex(p => p.name.toLowerCase().includes(arg.toLowerCase()));
+      if (i < 0) return print("open: no project matches '" + esc(arg) + "'", "cli-err");
+      const cards = document.querySelectorAll("#project-grid .proj");
+      const target = document.getElementById("projects");
+      if (target) target.scrollIntoView({ behavior: "instant", block: "start" });
+      print("opening " + esc(projects[i].name) + " …", "cli-ok");
+      setTimeout(() => { if (cards[i]) cards[i].click(); }, 200);
+    },
+    whoami() {
+      const p = (typeof DATA !== "undefined" && DATA.profile) || {};
+      print("<span class=\"cli-ok\">" + esc(p.name || "Utsav Gupta") + "</span> — " + esc(p.tagline || ""));
+      print("b.tech cse '28 · vips, new delhi · security · crypto · games", "dim-line");
+      print("email " + esc(p.email || "") + " · github " + esc(p.handle || ""), "dim-line");
+    },
+    theme(arg) {
+      if (!arg) return print("phosphor: " + theme + " — themes: green · amber · ice (usage: theme amber)", "dim-line");
+      arg = arg.toLowerCase();
+      if (!THEMES.includes(arg)) return print("theme '" + esc(arg) + "' not found — try: green · amber · ice", "cli-err");
+      setTheme(arg);
+      print("phosphor set to " + arg, "cli-ok");
+    },
+    resume() {
+      const a = document.querySelector('a[download]') || document.querySelector('a[href*="Resume.pdf"]');
+      if (a) { a.click(); print("sending résumé …", "cli-ok"); }
+      else print("résumé link not found — try the contact section.", "cli-err");
+    },
+    contact() { location.hash = "contact"; print("opening handshake …", "cli-ok"); },
+    date() { print(esc(new Date().toLocaleString("en-GB", { timeZone: "Asia/Kolkata", hour12: false })) + " IST", "dim-line"); },
+    hack() { print("nice try — running the trace locally…", "cli-warn"); dispatchEvent(new CustomEvent("portfolio:hack")); },
+    sudo() {
+      if (rooted) print("sudo: you are already root, operator.", "cli-ok");
+      else print("sudo: permission denied — earn it first.", "cli-err");
+    },
+    clear() { out.innerHTML = ""; }
+  };
+
+  print("portfolio shell — type <span class=\"cli-ok\">help</span> to get started.", "dim-line");
+
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const raw = input.value.trim();
+    print(PROMPT + " " + esc(raw), "cmd");
+    input.value = "";
+    if (!raw) return;
+    hist.push(raw); hIdx = hist.length;
+    const parts = raw.split(/\s+/);
+    const fn = cmds[parts[0].toLowerCase()];
+    if (fn) fn(parts.slice(1).join(" "));
+    else print("command not found: " + esc(parts[0]) + " — try 'help'", "cli-err");
+  });
+
+  input.addEventListener("keydown", e => {
+    if (e.key === "ArrowUp") {
+      if (hIdx > 0) { hIdx--; input.value = hist[hIdx]; }
+      e.preventDefault();
+    } else if (e.key === "ArrowDown") {
+      if (hIdx < hist.length - 1) { hIdx++; input.value = hist[hIdx]; }
+      else { hIdx = hist.length; input.value = ""; }
+      e.preventDefault();
+    }
+  });
+  out.addEventListener("click", () => input.focus());
+
+  /* ── konami → ACCESS GRANTED (earns sudo) ── */
+  const gEl = $("#granted"), gLog = $("#granted-log");
+  const seq = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
+  const gLines = ["> validating sequence … [OK]", "> elevating privileges … [OK]", "> sudo: root granted — welcome back, operator."];
+  let k = 0;
+  function grant() {
+    if (rooted || !gEl) return;
+    rooted = true;
+    if (document.activeElement === input) input.value = "";
+    gLog.innerHTML = "";
+    gEl.classList.add("on"); gEl.setAttribute("aria-hidden", "false");
+    let i = 0;
+    const step = () => {
+      if (i < gLines.length) {
+        const d = document.createElement("div"); d.textContent = gLines[i++];
+        gLog.appendChild(d); setTimeout(step, 550);
+      } else setTimeout(() => { gEl.classList.remove("on"); gEl.setAttribute("aria-hidden", "true"); }, 2200);
+    };
+    setTimeout(step, 400);
+    gEl.addEventListener("click", () => { gEl.classList.remove("on"); gEl.setAttribute("aria-hidden", "true"); }, { once: true });
+  }
+  addEventListener("keydown", e => {
+    const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    k = (key === seq[k]) ? k + 1 : (key === seq[0] ? 1 : 0);
+    if (k === seq.length) { k = 0; grant(); }
   });
 })();
