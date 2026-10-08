@@ -393,15 +393,16 @@ footer { border-top: 1px solid var(--border); padding: 26px 0; font-size: 12.5px
 .cdtab:not(.active):hover { background: var(--panel); color: var(--text); }
 .cdtab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 .cdtab svg { width: 18px; height: 18px; flex: none; }
-/* flat 3D flip: codfolio's react-card-flip — 1s ease, backface-hidden faces, no perspective */
+/* flat flip: codfolio's react-card-flip — 1s rotateY(180), linear so the 90° edge-on point
+   lands exactly at 0.5s. Each face is only ever VISIBLE in its upright half (visibility swaps
+   at the edge-on mark), so a mirrored back-face can never paint — in any engine. */
 .codcard-flip { perspective: none; }
-.codcard-flipper { display: grid; transform-style: preserve-3d; transition: transform 1s; }
+.codcard-flipper { display: grid; transition: transform 1s linear; }
 .codcard-flipper.dev { transform: rotateY(180deg); }
-.codcard-face { grid-area: 1 / 1; }
-/* every descendant needs it: backface-visibility is not inherited, and firefox keeps painting
-   descendants of a hidden-back face (codfolio hides their inner wrapper for the same reason) */
-.codcard-face, .codcard-face * { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-.codcard-face.back { transform: rotateY(180deg); }
+.codcard-face { grid-area: 1 / 1; visibility: visible; transition: visibility 0s linear .5s; }
+.codcard-face.back { visibility: hidden; transform: rotateY(180deg); }
+.codcard-flipper.dev .codcard-face { visibility: hidden; }
+.codcard-flipper.dev .codcard-face.back { visibility: visible; }
 .codcard-brand { font-size: 15px; font-weight: 800; letter-spacing: -.02em; color: var(--text); text-decoration: none; }
 .codcard-brand:hover { opacity: .75; }
 .codcard-brand span { color: var(--accent); }
