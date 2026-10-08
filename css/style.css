@@ -381,8 +381,12 @@ footer { border-top: 1px solid var(--border); padding: 26px 0; font-size: 12.5px
 /* ── Codolio profile card: codolio.com's dual-pane card, themed to this site, live via their API ── */
 .codcard { padding: 18px 22px 22px; text-align: center; }
 .codcard-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-.codcard-tabs { display: flex; align-items: center; background: var(--panel-2); border: 1px solid var(--border); border-radius: 999px; padding: 4px; margin-bottom: 14px; box-shadow: 0 4px 14px rgba(0, 0, 0, .18); }
-.cdtab { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: none; border: 0; font: inherit; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; transition: all .3s; }
+.codcard-tabs { display: flex; align-items: center; width: fit-content; max-width: 100%; margin: 0 auto 14px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 999px; padding: 4px; box-shadow: 0 4px 14px rgba(0, 0, 0, .18); }
+.cdtab { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 16px; background: none; border: 0; font: inherit; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; transition: all .3s; white-space: nowrap; }
+@media (max-width: 440px) {
+  .cdtab { font-size: 12px; padding: 7px 12px; gap: 6px; }
+  .cdtab svg { display: none; }
+}
 .cdtab:first-of-type { border-radius: 999px 0 0 999px; }
 .cdtab:last-of-type { border-radius: 0 999px 999px 0; }
 .cdtab.active { background: var(--accent); color: var(--on-accent); font-weight: 600; box-shadow: 0 2px 8px var(--accent-glow); }
@@ -393,7 +397,10 @@ footer { border-top: 1px solid var(--border); padding: 26px 0; font-size: 12.5px
 .codcard-flip { perspective: none; }
 .codcard-flipper { display: grid; transform-style: preserve-3d; transition: transform 1s; }
 .codcard-flipper.dev { transform: rotateY(180deg); }
-.codcard-face { grid-area: 1 / 1; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.codcard-face { grid-area: 1 / 1; }
+/* every descendant needs it: backface-visibility is not inherited, and firefox keeps painting
+   descendants of a hidden-back face (codfolio hides their inner wrapper for the same reason) */
+.codcard-face, .codcard-face * { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .codcard-face.back { transform: rotateY(180deg); }
 .codcard-brand { font-size: 15px; font-weight: 800; letter-spacing: -.02em; color: var(--text); text-decoration: none; }
 .codcard-brand:hover { opacity: .75; }
