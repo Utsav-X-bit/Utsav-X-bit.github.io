@@ -595,12 +595,21 @@
     const s = renderHeatmap(elId, pairs, prefix, noun);
     if (s) { $(totalSel).textContent = s.total; $(daysSel).textContent = s.days; }
   }
-  function renderCodolio(total, rows) {
-    const t = $("#cod-total"); if (t) t.textContent = total;
-    const box = $("#cod-plats");
-    if (box) box.innerHTML = rows.map(r => "<span>" + esc(r[0]) + " <b>" + r[1] + "</b></span>").join("");
+  const COD_ICON = { atcoder: "atcoder_light", leetcode: "leetcode_light", codechef: "codechef_light", codeforces: "codeforces" };
+  function renderCodolio(c) {
+    const t = $("#cod-total"); if (t && c.total != null) t.textContent = c.total;
+    const d = $("#cod-days"); if (d && typeof c.days === "number") d.textContent = c.days;
+    const n = $("#cod-name"); if (n && c.name) n.textContent = c.name;
+    const h = $("#cod-handle"); if (h && c.handle) h.textContent = c.handle;
+    const ic = $("#cod-icons");
+    if (ic) ic.innerHTML = (c.plats || []).filter(p => COD_ICON[p])
+      .map(p => '<img src="https://codolio.com/icons/' + COD_ICON[p] + '.png" alt="' + esc(p) + '" loading="lazy" onerror="this.remove()">').join("");
+    const ch = $("#cod-chips");
+    if (ch) ch.innerHTML = (c.chips || []).map(x => "<span>#" + esc(x) + "</span>").join("");
+    const av = $("#cod-av");
+    if (av && c.avatar) av.innerHTML = '<img class="codcard-av" src="' + c.avatar + '" alt="" onerror="this.remove()">';
   }
-  renderCodolio(DATA.codolio.total, DATA.codolio.plats); // paints instantly, live refresh follows
+  renderCodolio(DATA.codolio); // paints instantly, live refresh follows
 
   // Codeforces — rating stats, contest count, rating chart, submission heatmap
   fetch("https://codeforces.com/api/user.info?handles=Utsav-X-bit", API).then(r => r.json()).then(j => {
@@ -633,12 +642,35 @@
     redrawHeat("gh-heatmap", pairs, "hl", "contribution", "#gh-total", "#gh-days");
   }).catch(() => {});
 
-  // Codolio — questions solved across linked platforms
+  // Codolio — profile card: avatar, name, solved/active-days stats, platform icons, tag chips
   fetch("https://api.codolio.com/profile?userKey=Utsav-X-bit", API).then(r => r.json()).then(j => {
-    const pl = (((j.data || {}).platformProfiles || {}).platformProfiles) || [];
-    const rows = pl.filter(p => p.totalQuestionStats && p.totalQuestionStats.totalQuestionCounts > 0)
-      .map(p => [p.platform, p.totalQuestionStats.totalQuestionCounts]);
-    if (rows.length) renderCodolio(rows.reduce((a, r) => a + r[1], 0), rows);
+    const d = j.data || {};
+    const pl = (d.platformProfiles || {}).platformProfiles || [];
+    const rows = pl.filter(p => p.totalQuestionStats && p.totalQuestionStats.totalQuestionCounts > 0);
+    if (!rows.length) return;
+    const days = new Set(); // codolio counts a day active if any platform has a submission in it
+    const langs = [], types = [];
+    for (const p of pl) {
+      const cal = (p.dailyActivityStatsResponse || {}).submissionCalendar;
+      if (cal) Object.keys(cal).forEach(k => days.add(k));
+      (p.userStats.languageList || []).forEach(l => { if (!langs.includes(l)) langs.push(l); });
+      (((p.platformDetails || {}).types) || []).forEach(t => { if (!types.includes(t)) types.push(t); });
+    }
+    // codolio's chip vocabulary, derived from its own profile fields
+    const chips = [...langs, ...types];
+    const cf = pl.find(p => p.platform === "codeforces" && p.userStats);
+    const cc = pl.find(p => p.platform === "codechef" && p.userStats);
+    if (cf && cf.userStats.currentRating < 1200) chips.push("NEWBIE");
+    if (cc && cc.userStats.stars > 0) chips.push(cc.userStats.stars + "STARS");
+    renderCodolio({
+      total: rows.reduce((a, p) => a + p.totalQuestionStats.totalQuestionCounts, 0),
+      days: days.size,
+      name: [d.firstName, d.secondName].filter(Boolean).join(" "),
+      handle: d.profileName ? "@" + d.profileName : null,
+      plats: pl.map(p => p.platform),
+      chips,
+      avatar: d.imageUrl,
+    });
   }).catch(() => {});
 })();
 
