@@ -581,15 +581,23 @@
     if (s) { $(totalSel).textContent = s.total; $(daysSel).textContent = s.days; }
   }
   // platform logos vendored locally — codfolio.com/icons/*.png went 404 (onerror used to wipe the row)
-  const COD_ICON = { atcoder: "img/platforms/atcoder.png", leetcode: "img/platforms/leetcode.svg", codechef: "img/platforms/codechef.svg", codeforces: "img/platforms/codeforces.svg" };
+  const COD_ICON = {
+    atcoder: { icon: "img/platforms/atcoder.png", href: "" },
+    leetcode: { icon: "img/platforms/leetcode.svg", href: "https://leetcode.com/u/Utsav-X-bit/" },
+    codechef: { icon: "img/platforms/codechef.svg", href: "https://www.codechef.com/users/Utsav_X_bit" },
+    codeforces: { icon: "img/platforms/codeforces.svg", href: "https://codeforces.com/profile/Utsav-X-bit" },
+  };
   function renderCodolio(c) {
     const t = $("#cod-total"); if (t && c.total != null) t.textContent = c.total;
     const d = $("#cod-days"); if (d && typeof c.days === "number") d.textContent = c.days;
     if (c.name) $$(".cod-nm").forEach(e => e.textContent = c.name);     // identity is duplicated on both flip faces
     if (c.handle) $$(".cod-hd").forEach(e => e.textContent = c.handle);
     const ic = $("#cod-icons");
-    if (ic) ic.innerHTML = (c.plats || []).filter(p => COD_ICON[p])
-      .map(p => '<img src="' + COD_ICON[p] + '" alt="' + esc(p) + '" loading="lazy" onerror="this.remove()">').join("");
+    if (ic) ic.innerHTML = (c.plats || []).filter(p => COD_ICON[p]).map(p => {
+      const m = COD_ICON[p];
+      const img = '<img src="' + m.icon + '" alt="' + esc(p) + '" loading="lazy" onerror="this.remove()">';
+      return m.href ? '<a href="' + m.href + '" target="_blank" rel="noopener" aria-label="' + esc(p) + ' profile">' + img + '</a>' : img;
+    }).join("");
     const ch = $("#cod-chips");
     if (ch) ch.innerHTML = (c.chips || []).map(x => "<span>#" + esc(x) + "</span>").join("");
     if (c.avatar) $$(".cod-avslot").forEach(av => { av.innerHTML = '<img class="codcard-av" src="' + c.avatar + '" alt="" onerror="this.remove()">'; });

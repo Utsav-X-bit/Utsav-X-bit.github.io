@@ -1,7 +1,7 @@
 # Graph Report - Utsav-X-bit.github.io  (2026-10-09)
 
 ## Corpus Check
-- 5 files · ~17,185 words
+- 5 files · ~17,236 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
