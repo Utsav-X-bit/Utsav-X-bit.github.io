@@ -582,7 +582,7 @@
   }
   // platform logos vendored locally — codfolio.com/icons/*.png went 404 (onerror used to wipe the row)
   const COD_ICON = {
-    atcoder: { icon: "img/platforms/atcoder.png", href: "" },
+    atcoder: { icon: "img/platforms/atcoder.png", href: "https://atcoder.jp/users/XD_OD" },
     leetcode: { icon: "img/platforms/leetcode.svg", href: "https://leetcode.com/u/Utsav-X-bit/" },
     codechef: { icon: "img/platforms/codechef.svg", href: "https://www.codechef.com/users/Utsav_X_bit" },
     codeforces: { icon: "img/platforms/codeforces.svg", href: "https://codeforces.com/profile/Utsav-X-bit" },
