@@ -580,7 +580,8 @@
     const s = renderHeatmap(elId, pairs, prefix, noun);
     if (s) { $(totalSel).textContent = s.total; $(daysSel).textContent = s.days; }
   }
-  const COD_ICON = { atcoder: "atcoder_light", leetcode: "leetcode_light", codechef: "codechef_light", codeforces: "codeforces" };
+  // platform logos vendored locally — codfolio.com/icons/*.png went 404 (onerror used to wipe the row)
+  const COD_ICON = { atcoder: "img/platforms/atcoder.png", leetcode: "img/platforms/leetcode.svg", codechef: "img/platforms/codechef.svg", codeforces: "img/platforms/codeforces.svg" };
   function renderCodolio(c) {
     const t = $("#cod-total"); if (t && c.total != null) t.textContent = c.total;
     const d = $("#cod-days"); if (d && typeof c.days === "number") d.textContent = c.days;
@@ -588,7 +589,7 @@
     if (c.handle) $$(".cod-hd").forEach(e => e.textContent = c.handle);
     const ic = $("#cod-icons");
     if (ic) ic.innerHTML = (c.plats || []).filter(p => COD_ICON[p])
-      .map(p => '<img src="https://codfolio.com/icons/' + COD_ICON[p] + '.png" alt="' + esc(p) + '" loading="lazy" onerror="this.remove()">').join("");
+      .map(p => '<img src="' + COD_ICON[p] + '" alt="' + esc(p) + '" loading="lazy" onerror="this.remove()">').join("");
     const ch = $("#cod-chips");
     if (ch) ch.innerHTML = (c.chips || []).map(x => "<span>#" + esc(x) + "</span>").join("");
     if (c.avatar) $$(".cod-avslot").forEach(av => { av.innerHTML = '<img class="codcard-av" src="' + c.avatar + '" alt="" onerror="this.remove()">'; });
